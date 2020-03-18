@@ -7,13 +7,13 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior() 
 
-DATA_FOLDER = '../VGAN/MNIST'
+DATA_FOLDER = '../VGAN/FashionMNIST'
 IMAGE_PIXELS = 28*28
 NOISE_SIZE = 100
 BATCH_SIZE = 100
 
 #====================LOAD DATA======================
-data = mnist_data()
+data = fashion_data(DATA_FOLDER)
 data_loader = DataLoader(data, batch_size=BATCH_SIZE, shuffle=True)
 num_batches = len(data_loader)
 
@@ -106,7 +106,7 @@ session = tf.InteractiveSession()
 # Init Variables
 tf.global_variables_initializer().run()
 # Init Logger
-logger = Logger(model_name='TF_GAN1', data_name='MNIST')
+logger = Logger(model_name='TF_GAN1', data_name='FASHION_MNIST')
 
 # Iterate through epochs
 for epoch in range(num_epochs):
