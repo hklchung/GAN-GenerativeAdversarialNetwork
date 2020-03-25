@@ -1,7 +1,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSNiuuAKRTR--kfzMMRXtB8nI3CjPwcqIoQvi1GVVr4FzGhyrWt" height="80">
+    <img src="https://raw.githubusercontent.com/torch/torch.github.io/master/blog/_posts/images/out.gif" height="100">
   </a>
 
   <h3 align="center">Generative Adversarial Network</h3>
