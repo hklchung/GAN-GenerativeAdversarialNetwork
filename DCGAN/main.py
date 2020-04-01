@@ -234,4 +234,4 @@ output_pwd = os.path.abspath(os.getcwd())
 images = []
 for filename in tqdm(os.listdir(result_pwd)):
     images.append(imageio.imread(result_pwd + '/' + filename))
-imageio.mimsave(output_pwd + result_pwd + '/' + 'movie.gif', images)
+imageio.mimsave(output_pwd + result_pwd + '/' + 'GAN.gif', images)
