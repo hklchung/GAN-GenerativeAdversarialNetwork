@@ -2,6 +2,7 @@ DCGAN/wip.py
 DCGAN/Result/Model1
 DCGAN/Result/Model2
 DCGAN/Result/Model3
-DCGAN/Train/Resized
-DCGAN/Train/seven50_faces
-DCGAN/Train/tenk_celebs
+DCGAN/Result/Model4
+DCGAN/Image/Train/Resized
+DCGAN/Image/Train/seven50_faces
+DCGAN/Image/Train/tenk_celebs
