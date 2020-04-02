@@ -65,7 +65,7 @@ Hope you are now excited to start building GAN on your machine. To get started, 
 ### DCGAN
 DCGAN is also known as Deep Convolutional Generative Adversarial Network, where two models are trained simultaneously by an adversarial process. A generator learns to create images that look real, while a discriminator learns to tell the real and fake images apart. During training, the generator progressively becomes better at creating images that look real, while the discriminator becomes better at telling them apart. The process reaches equilibrium when the discriminator can no longer distinguish real images from fakes, i.e. accuracy maintains at 50%.
 
-Results from DCGAN after training 2000 epochs.
+Results from DCGAN training at with below listed configurations.
 <table>
   <tbody>
     <tr>
@@ -73,13 +73,24 @@ Results from DCGAN after training 2000 epochs.
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model7/GANmodel_1700.png?raw=true" height="350"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model7/GANmodel_1700.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>no pre-training</li>
           <li>batch_size = 32</li>
           <li>epoch = 2000</li>
           <li>noise_len = 100</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model9/GANmodel_2500.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 16</li>
+          <li>epoch = 5000</li>
+          <li>noise_len = 256</li>
         </ul>
       </td>
     </tr>
