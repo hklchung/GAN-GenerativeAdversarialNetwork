@@ -158,9 +158,20 @@ def plot_output(noise, step):
     plt.tight_layout()
     plt.savefig(filename)
     plt.close('all')
+    
+#==========================Plot loss function==================================
+def plot_loss(d_performance, gan_performance, jump=100):
+    plt.figure(figsize=(10, 10))
+    plt.plot(d_performance[0::jump], label='discriminator')
+    plt.plot(gan_performance[0::jump], label='GAN')
+    plt.xlabel('epoch ({})'.format(jump))
+    plt.ylabel('loss')
+    plt.legend()
+    plt.savefig('loss_over_epoch.png')
+    plt.close('all')
 
 #=========================Train GAN function===================================
-def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretrain_num=100):
+def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretrain_num=100, noise_len=100):
     if pretrain == True:
         if pretrain_num > X.shape[0]:
             pretrain_num = X.shape[0]
@@ -168,7 +179,7 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
             # Randomly select n (pretrain_num) number of images from X
             images_real = X[np.random.randint(0,X.shape[0], size=pretrain_num), :, :, :]
             # Generate n number of 100D noise vectors
-            noise = np.random.normal(0.0, 1.0, size=[pretrain_num, 100])
+            noise = np.random.normal(0.0, 1.0, size=[pretrain_num, noise_len])
             # Produce n number of fake images with generator
             images_fake = G.predict(noise)
             # Concat real and fake images
@@ -185,12 +196,14 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
     else:
         None
     
+    d_performance = []
+    gan_performance = []
     for i in range(epoch):
         #=====================Train discriminator==============================
         # Randomly select n (batch_size) number of images from X
         images_real = X[np.random.randint(0,X.shape[0], size=batch_size), :, :, :]
         # Generate n number of 100D noise vectors
-        noise = np.random.normal(0.0, 1.0, size=[batch_size, 100])
+        noise = np.random.normal(0.0, 1.0, size=[batch_size, noise_len])
         # Produce n number of fake images with generator
         images_fake = G.predict(noise)
         # Concat real and fake images
@@ -209,7 +222,7 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
         # Create labels
         y = np.ones([batch_size, 1])
         # Generate n number of 100D noise vectors
-        noise = np.random.normal(0.0, 1.0, size=[batch_size, 100])
+        noise = np.random.normal(0.0, 1.0, size=[batch_size, noise_len])
         # Freeze weights in discriminator
         D.trainable = False
         # Train GAN on the generated data
@@ -219,13 +232,28 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
         log_msg = "%s  [GAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
         print(log_msg)
         
+        d_performance.append(np.array(d_loss[0], dtype=float))
+        gan_performance.append(np.array(gan_loss[0], dtype=float))
+        
         # Save ouputs
         if save_interval>0 and (i+1)%save_interval==0:
-            noise_input = np.random.normal(0.0, 1.0, size=[16, 100])
+            noise_input = np.random.normal(0.0, 1.0, size=[16, noise_len])
             plot_output(noise=noise_input, step=(i+1))
+    
+    d_performance = [float(x) for x in d_performance]
+    gan_performance = [float(x) for x in gan_performance]
+    return(d_performance, gan_performance)
 
 #=================================Train GAN====================================
-train_gan(X=X, model=GAN, batch_size=256, epoch=2000, save_interval=100, pretrain=True, pretrain_num=20000)
+# Hints:
+# Input noise - longer noise vector produce better results (100, 128, 256)
+# --- to change noise_len, make sure to also change generator input size
+# Batch size - pick smaller batch size like 8, 16, 32, 64
+# Pre-training may hurt performance
+d_performance, gan_performance = train_gan(X=X, model=GAN, batch_size=32, epoch=2000, 
+                                           save_interval=100, pretrain=False, pretrain_num=20000,
+                                           noise_len=100)
+plot_loss(d_performance, gan_performance)
 
 #================================Result GIF====================================
 import imageio
@@ -234,4 +262,4 @@ output_pwd = os.path.abspath(os.getcwd())
 images = []
 for filename in tqdm(os.listdir(result_pwd)):
     images.append(imageio.imread(result_pwd + '/' + filename))
-imageio.mimsave(output_pwd + result_pwd + '/' + 'GAN.gif', images)
+imageio.mimsave(output_pwd + '/' + result_pwd + '/' + 'GAN.gif', images)
