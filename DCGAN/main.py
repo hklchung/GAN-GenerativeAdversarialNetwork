@@ -10,6 +10,7 @@ from keras.optimizers import RMSprop, Adam
 from keras.callbacks import TensorBoard
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from keras.utils.vis_utils import plot_model
+from keras import backend
 from skimage.color import rgb2lab, lab2rgb, rgb2gray
 from skimage.io import imsave
 from sklearn.utils import shuffle
@@ -17,8 +18,8 @@ from PIL import Image, ImageOps
 import tensorflow as tf
 
 #===========================Resize images======================================
-for filename in tqdm(os.listdir('Image/Train')):
-    temp = Image.open('Image/Train/' + filename)
+for filename in tqdm(os.listdir('Image/Train/tenk_celebs/100k')):
+    temp = Image.open('Image/Train/tenk_celebs/100k/' + filename)
     size = 32, 32
     temp.thumbnail(size, Image.ANTIALIAS)
     temp.save('Image/Train/Resized/' + filename, "JPEG")
@@ -83,13 +84,14 @@ plot_model(D, to_file='discriminator.png', show_shapes=True, show_layer_names=Tr
 # Define architecture of the generator (fraudster AI)
 # Note: with each layer, the image gets larger but with reduced depth
 dropout = 0.5
-depth = 64*4
+depth = 64*8
 dim = 8
+noise_vec = 256
 G = Sequential()
 # Input layer
 # In: 100
 # Out: dim x dim x depth
-G.add(Dense(dim*dim*depth, input_dim=100))
+G.add(Dense(dim*dim*depth, input_dim=noise_vec))
 G.add(BatchNormalization(momentum=0.9))
 G.add(LeakyReLU(alpha=0.3))
 G.add(Reshape((dim, dim, depth)))
@@ -124,6 +126,10 @@ G.add(Activation('sigmoid'))
 G.summary()
 # Save model architecture as .PNG
 plot_model(G, to_file='generator.png', show_shapes=True, show_layer_names=True)
+
+#=====================Wasserstein loss function================================
+def wasserstein_loss(y_true, y_pred):
+	return backend.mean(y_true * y_pred)
 
 #============================Optimiser=========================================
 # Define optimisers - optimisr1 will be used for the discriminator and generator
@@ -169,6 +175,17 @@ def plot_loss(d_performance, gan_performance, jump=100):
     plt.legend()
     plt.savefig('loss_over_epoch.png')
     plt.close('all')
+    
+#========================Plot accuracy function================================
+def plot_accuracy(d_performance, gan_performance, jump=100):
+    plt.figure(figsize=(10, 10))
+    plt.plot(d_performance[0::jump], label='discriminator')
+    plt.plot(gan_performance[0::jump], label='GAN')
+    plt.xlabel('epoch ({})'.format(jump))
+    plt.ylabel('accuracy')
+    plt.legend()
+    plt.savefig('accuracy_over_epoch.png')
+    plt.close('all')
 
 #=========================Train GAN function===================================
 def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretrain_num=100, noise_len=100):
@@ -198,6 +215,8 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
     
     d_performance = []
     gan_performance = []
+    d_accuracy = []
+    gan_accuracy = []
     for i in range(epoch):
         #=====================Train discriminator==============================
         # Randomly select n (batch_size) number of images from X
@@ -235,14 +254,19 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
         d_performance.append(np.array(d_loss[0], dtype=float))
         gan_performance.append(np.array(gan_loss[0], dtype=float))
         
+        d_accuracy.append(np.array(d_loss[1], dtype=float))
+        gan_accuracy.append(np.array(gan_loss[1], dtype=float))
+        
         # Save ouputs
         if save_interval>0 and (i+1)%save_interval==0:
             noise_input = np.random.normal(0.0, 1.0, size=[16, noise_len])
             plot_output(noise=noise_input, step=(i+1))
     
-    d_performance = [float(x) for x in d_performance]
-    gan_performance = [float(x) for x in gan_performance]
-    return(d_performance, gan_performance)
+    d_loss_ls = [float(x) for x in d_performance]
+    gan_loss_ls = [float(x) for x in gan_performance]
+    d_acc_ls = [float(x) for x in d_accuracy]
+    gan_acc_ls = [float(x) for x in gan_accuracy]
+    return(d_loss_ls, gan_loss_ls, d_acc_ls, gan_acc_ls)
 
 #=================================Train GAN====================================
 # Hints:
@@ -250,10 +274,17 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
 # --- to change noise_len, make sure to also change generator input size
 # Batch size - pick smaller batch size like 8, 16, 32, 64
 # Pre-training may hurt performance
-d_performance, gan_performance = train_gan(X=X, model=GAN, batch_size=32, epoch=2000, 
-                                           save_interval=100, pretrain=False, pretrain_num=20000,
-                                           noise_len=100)
-plot_loss(d_performance, gan_performance)
+d_loss_ls, gan_loss_ls, d_acc_ls, gan_acc_ls = train_gan(X=X, model=GAN, batch_size=32, epoch=2000, 
+                                                         save_interval=100, pretrain=False, pretrain_num=20000,
+                                                         noise_len=100)
+plot_loss(d_loss_ls, gan_loss_ls)
+plot_accuracy(d_acc_ls, gan_acc_ls)
+
+#================================Save model====================================
+model_json = GAN.to_json()
+with open("GAN_model.json", "w") as json_file:
+    json_file.write(model_json)
+GAN.save_weights("GAN_model.h5")
 
 #================================Result GIF====================================
 import imageio
