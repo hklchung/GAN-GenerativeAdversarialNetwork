@@ -102,10 +102,10 @@ Below is a summary of what we have done in our DCGAN code file <a href="https://
   * Train the GAN with this batch of images
 
 Training DCGAN successfully is difficult as we are trying to train two models that compete with each other at the same time, and optimisation can oscillate between solutions so much that the generator can collapse. Below are some tips on how to train a DCGAN succesfully.
-1. Increase length of input noise vectors - start with 100 and try 128 and 256
-2. Decrease batch size - start with 64 and try 32, 16 and 8
+1. Increase length of input noise vectors - Start with 100 and try 128 and 256
+2. Decrease batch size - Start with 64 and try 32, 16 and 8. Smaller batch size generally leads to rapid learning but a volatile learning process with higher variance in the classification accuracy. Whereas larger batch sizes slow down the learning process but the final stages result in a convergence to a more stable model exemplified by lower variance in classification accuracy.
 3. No pre-training of discriminator
-4. Training longer does not necessarily lead to better results - so don't set the epoch parameter too high
+4. Training longer does not necessarily lead to better results - So don't set the epoch parameter too high
 
 You can also try to configure the below settings.
 1. GAN network architecture
