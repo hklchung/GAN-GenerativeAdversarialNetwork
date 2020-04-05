@@ -142,7 +142,9 @@ Alternatively, if you are not a programmer but would still like to contribute to
 
 <!-- KNOWN ISSUES -->
 ## Known issues
-Incompatibility with Tensorflow V2 or later versions.
+* Incompatibility with Tensorflow V2 or later versions
+* Training may take a very long time if you do not have a GPU available
+* If you have previously installed tensorflow-gpu with pip, tensorflow may be unable to detect your GPU. To overcome this issue, first uninstall tensorflow-gpu, then reinstall with conda.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
