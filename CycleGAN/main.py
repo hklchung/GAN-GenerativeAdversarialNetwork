@@ -17,13 +17,26 @@ from sklearn.utils import shuffle
 from PIL import Image, ImageOps
 import tensorflow as tf
 
+#===========================Resize images======================================
+for filename in tqdm(os.listdir('Image/monet2photo/trainA')):
+    temp = Image.open('Image/monet2photo/trainA/' + filename)
+    size = 64, 64
+    temp.thumbnail(size, Image.ANTIALIAS)
+    temp.save('Image/monet2photo/Resized_trainA/' + filename, "JPEG")
+
+for filename in tqdm(os.listdir('Image/monet2photo/trainB')):
+    temp = Image.open('Image/monet2photo/trainB/' + filename)
+    size = 64, 64
+    temp.thumbnail(size, Image.ANTIALIAS)
+    temp.save('Image/monet2photo/Resized_trainB/' + filename, "JPEG")
+
 #============================Get images========================================
 # Grab Monet art images from folder
 images_a = []
-for filename in tqdm(os.listdir('Image/monet2photo/trainA')):
-    temp = np.array(img_to_array(load_img('Image/monet2photo/trainA/'+filename)), dtype=float)
-    hor = 256 - temp.shape[0]
-    ver = 256 - temp.shape[1]
+for filename in tqdm(os.listdir('Image/monet2photo/Resized_trainA')):
+    temp = np.array(img_to_array(load_img('Image/monet2photo/Resized_trainA/'+filename)), dtype=float)
+    hor = 64 - temp.shape[0]
+    ver = 64 - temp.shape[1]
     if hor%2 != 0:
         temp = np.pad(temp, ((hor//2 + 1, hor//2), (ver//2, ver//2), (0, 0)),
               mode='constant', constant_values=0)
@@ -39,10 +52,10 @@ for filename in tqdm(os.listdir('Image/monet2photo/trainA')):
     
 # Grab real images from folder
 images_b = []
-for filename in tqdm(os.listdir('Image/monet2photo/trainB')):
-    temp = np.array(img_to_array(load_img('Image/monet2photo/trainB/'+filename)), dtype=float)
-    hor = 256 - temp.shape[0]
-    ver = 256 - temp.shape[1]
+for filename in tqdm(os.listdir('Image/monet2photo/Resized_trainB')):
+    temp = np.array(img_to_array(load_img('Image/monet2photo/Resized_trainB/'+filename)), dtype=float)
+    hor = 64 - temp.shape[0]
+    ver = 64 - temp.shape[1]
     if hor%2 != 0:
         temp = np.pad(temp, ((hor//2 + 1, hor//2), (ver//2, ver//2), (0, 0)),
               mode='constant', constant_values=0)
@@ -58,13 +71,13 @@ for filename in tqdm(os.listdir('Image/monet2photo/trainB')):
     
 # Normalise RGB intensities, reshape and forced into array
 X_a = [1.0/255*x for x in images_a]
-X_a = [x.reshape(256, 256, 3) for x in X_a]
+X_a = [x.reshape(64, 64, 3) for x in X_a]
 X_a = np.array(X_a)
 del(images_a)
 
 # Normalise RGB intensities, reshape and forced into array
 X_b = [1.0/255*x for x in images_b]
-X_b = [x.reshape(256, 256, 3) for x in X_b]
+X_b = [x.reshape(64, 64, 3) for x in X_b]
 X_b = np.array(X_b)
 del(images_b)
 
@@ -160,14 +173,14 @@ GAN.compile(loss='binary_crossentropy', optimizer=optimizer2, metrics=['accuracy
 
 
 #temp = G_AB.predict(X_a[1].reshape(1, 256, 256, 3))
-epoch = 10
-batch_size = 32
+epoch = 100
+batch_size = 4
 for i in range(epoch):
     #=====================Train discriminator==============================
     # Randomly select n (batch_size) number of images from X
     images_real = X_a[np.random.randint(0,X_a.shape[0], size=batch_size), :, :, :]
     # Produce n number of fake images with generator
-    images_fake = G_AB.predict(images_real)
+    images_fake = G_AB.predict(X_a[np.random.randint(0,X_a.shape[0], size=batch_size), :, :, :])
     # Concat real and fake images
     x = np.concatenate((images_real, images_fake))
     # Create labels
