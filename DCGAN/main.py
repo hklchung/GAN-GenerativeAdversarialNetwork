@@ -81,24 +81,24 @@ depth = 64
 dropout = 0.5
 D = Sequential()
 # Input layer
-D.add(Conv2D(depth*1, 5, strides=2, input_shape=X.shape[1:],padding='same'))
+D.add(Conv2D(depth*1, 5, strides=2, input_shape=X.shape[1:],padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
 # Second layer
-D.add(Conv2D(depth*2, 5, strides=2, padding='same'))
+D.add(Conv2D(depth*2, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
 # Third layer
-D.add(Conv2D(depth*4, 5, strides=2, padding='same'))
+D.add(Conv2D(depth*4, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
 # Forth layer
-D.add(Conv2D(depth*8, 5, strides=1, padding='same'))
+D.add(Conv2D(depth*8, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
 D.add(Flatten())
 # Output layer
-D.add(Dense(1))
+D.add(Dense(1, kernel_initializer='glorot_normal'))
 D.add(Activation('sigmoid'))
 
 # Print out architecture of the discriminator
@@ -117,7 +117,7 @@ G = Sequential()
 # Input layer
 # In: 100
 # Out: dim x dim x depth
-G.add(Dense(dim*dim*depth, input_dim=noise_vec))
+G.add(Dense(dim*dim*depth, input_dim=noise_vec, kernel_initializer='glorot_normal'))
 G.add(BatchNormalization(momentum=0.9))
 G.add(LeakyReLU(alpha=0.3))
 G.add(Reshape((dim, dim, depth)))
@@ -126,26 +126,26 @@ G.add(Dropout(dropout))
 # In: dim x dim x depth
 # Out: 2*dim x 2*dim x depth/2
 G.add(UpSampling2D())
-G.add(Conv2DTranspose(int(depth/2), 5, padding='same'))
+G.add(Conv2DTranspose(int(depth/2), 5, padding='same', kernel_initializer='glorot_normal'))
 G.add(BatchNormalization(momentum=0.8))
 G.add(LeakyReLU(alpha=0.3))
 # Third layer
 # In: 2*dim x 2*dim x depth/2
 # Out: 4*dim x 4*dim x depth/4
 G.add(UpSampling2D())
-G.add(Conv2DTranspose(int(depth/4), 5, padding='same'))
+G.add(Conv2DTranspose(int(depth/4), 5, padding='same', kernel_initializer='glorot_normal'))
 G.add(BatchNormalization(momentum=0.8))
 G.add(LeakyReLU(alpha=0.3))
 # Forth layer
 # In: 4*dim x 4*dim x depth/4
 # Out: 8*dim x 8*dim x depth/8
-G.add(Conv2DTranspose(int(depth/8), 5, padding='same'))
+G.add(Conv2DTranspose(int(depth/8), 5, padding='same', kernel_initializer='glorot_normal'))
 G.add(BatchNormalization(momentum=0.8))
 G.add(LeakyReLU(alpha=0.3))
 # Output layer
 # In: 8*dim x 8*dim x depth/8
 # Out: 32 x 32 x 3 RGB scale image [0.0,1.0] per pixel
-G.add(Conv2DTranspose(3, 5, padding='same'))
+G.add(Conv2DTranspose(3, 5, padding='same', kernel_initializer='glorot_normal'))
 G.add(Activation('sigmoid'))
 
 # Print out architecture of the generator
@@ -300,9 +300,9 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
 # --- to change noise_len, make sure to also change generator input size
 # Batch size - pick smaller batch size like 8, 16, 32, 64
 # Pre-training may hurt performance
-d_loss_ls, gan_loss_ls, d_acc_ls, gan_acc_ls = train_gan(X=X, model=GAN, batch_size=32, epoch=2000, 
+d_loss_ls, gan_loss_ls, d_acc_ls, gan_acc_ls = train_gan(X=X, model=GAN, batch_size=16, epoch=2000, 
                                                          save_interval=100, pretrain=False, pretrain_num=20000,
-                                                         noise_len=100)
+                                                         noise_len=256)
 plot_loss(d_loss_ls, gan_loss_ls)
 plot_accuracy(d_acc_ls, gan_acc_ls)
 
