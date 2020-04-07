@@ -18,6 +18,7 @@ from PIL import Image, ImageOps
 import tensorflow as tf
 
 #===========================Resize images======================================
+'''
 for filename in tqdm(os.listdir('Image/monet2photo/trainA')):
     temp = Image.open('Image/monet2photo/trainA/' + filename)
     size = 64, 64
@@ -29,7 +30,7 @@ for filename in tqdm(os.listdir('Image/monet2photo/trainB')):
     size = 64, 64
     temp.thumbnail(size, Image.ANTIALIAS)
     temp.save('Image/monet2photo/Resized_trainB/' + filename, "JPEG")
-
+'''
 #============================Get images========================================
 # Grab Monet art images from folder
 images_a = []
@@ -85,44 +86,85 @@ del(images_b)
 def create_GUnit(X, depth = 64, dropout = 0.5):
     # Define architecture of the discriminator (police AI)
     D = Sequential()
-    # First layer
-    D.add(Conv2D(depth*1, 5, strides=2, input_shape=X.shape[1:],padding='same', kernel_initializer='glorot_normal'))
+    # First hidden layer (Conv)
+    # Input = 256x256x3
+    # Output = 256x256x64
+    D.add(Conv2D(depth*1, 5, strides=1, input_shape=X.shape[1:],padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
     D.add(LeakyReLU(alpha=0.2))
     D.add(Dropout(dropout))
-    # Second layer
+    # Second hidden layer (Conv)
+    # Input = 256x256x64
+    # Output = 128x128x128
     D.add(Conv2D(depth*2, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
     D.add(LeakyReLU(alpha=0.2))
     D.add(Dropout(dropout))
-    # Third layer
+    # Third hidden layer (Conv)
+    # Input = 128x128x128
+    # Output = 64x64x256
     D.add(Conv2D(depth*4, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
     D.add(LeakyReLU(alpha=0.2))
     D.add(Dropout(dropout))
-    # Forth layer
-    D.add(Conv2D(depth*8, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
+    # Forth hidden layer (Residual)
+    # Input = 64x64x256
+    # Output = 64x64x256
+    D.add(Conv2D(depth*4, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
     D.add(LeakyReLU(alpha=0.2))
     D.add(Dropout(dropout))
-    # Output layer
-    D.add(Conv2D(1, 5, padding='same', kernel_initializer='glorot_normal'))
+    # Fifth hidden layer (Residual)
+    # Input = 64x64x256
+    # Output = 64x64x256
+    D.add(Conv2D(depth*4, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
     D.add(LeakyReLU(alpha=0.2))
     D.add(Dropout(dropout))
-    
-    D.add(Conv2DTranspose(depth*8, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
-    D.add(BatchNormalization(momentum=0.8))
+    # Sixth hidden layer (Residual)
+    # Input = 64x64x256
+    # Output = 64x64x256
+    D.add(Conv2D(depth*4, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
     D.add(LeakyReLU(alpha=0.2))
-    
-    D.add(Conv2DTranspose(depth*4, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
-    D.add(BatchNormalization(momentum=0.8))
+    D.add(Dropout(dropout))
+    # Seventh hidden layer (Residual)
+    # Input = 64x64x256
+    # Output = 64x64x256
+    D.add(Conv2D(depth*4, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
     D.add(LeakyReLU(alpha=0.2))
-    
+    D.add(Dropout(dropout))
+    # Eigth hidden layer (Residual)
+    # Input = 64x64x256
+    # Output = 64x64x256
+    D.add(Conv2D(depth*4, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
+    D.add(LeakyReLU(alpha=0.2))
+    D.add(Dropout(dropout))
+    # Nineth hidden layer (Residual)
+    # Input = 64x64x256
+    # Output = 64x64x256
+    D.add(Conv2D(depth*4, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
+    D.add(BatchNormalization(momentum=0.9))
+    D.add(LeakyReLU(alpha=0.2))
+    D.add(Dropout(dropout))
+    # Tenth hidden layer (Trans Conv)
+    # Input = 64x64x256
+    # Output = 128x128x128
     D.add(Conv2DTranspose(depth*2, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
     D.add(BatchNormalization(momentum=0.8))
     D.add(LeakyReLU(alpha=0.2))
-    
+    # Eleventh hidden layer (Trans Conv)
+    # Input = 128x128x128
+    # Output = 256x256x64
     D.add(Conv2DTranspose(depth*1, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
     D.add(BatchNormalization(momentum=0.8))
-    D.add(LeakyReLU(alpha=0.3))
-    
-    D.add(Conv2DTranspose(3, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
+    D.add(LeakyReLU(alpha=0.2))
+    # Twelth hidden layer (Trans Conv)
+    # Input = 256x256x64
+    # Output = 256x256x3   
+    D.add(Conv2DTranspose(3, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
     D.add(Activation('sigmoid'))
     
     return(D)
