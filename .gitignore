@@ -12,3 +12,4 @@ DCGAN/Image/Train/seven50_faces
 DCGAN/Image/Train/tenk_celebs
 CycleGAN/Image/monet2photo
 CycleGAN/Image/monet2photo.zip
+CycleGAN/monet2photo_256.npz
