@@ -13,8 +13,10 @@ from keras.utils.vis_utils import plot_model
 from keras import backend
 from skimage.color import rgb2lab, lab2rgb, rgb2gray
 from skimage.io import imsave
+from skimage.transform import resize
 from sklearn.utils import shuffle
 from PIL import Image, ImageOps
+from imageio import imread
 import tensorflow as tf
 
 #===========================Resize images======================================
@@ -32,6 +34,7 @@ for filename in tqdm(os.listdir('Image/monet2photo/trainB')):
     temp.save('Image/monet2photo/Resized_trainB/' + filename, "JPEG")
 '''
 #============================Get images========================================
+'''
 # Grab Monet art images from folder
 images_a = []
 for filename in tqdm(os.listdir('Image/monet2photo/Resized_trainA')):
@@ -69,16 +72,28 @@ for filename in tqdm(os.listdir('Image/monet2photo/Resized_trainB')):
               mode='constant', constant_values=0)
     # Store images into a list
     images_b.append(np.array(temp, dtype=float))
-    
+'''
+images_a = []
+for filename in tqdm(os.listdir('Image/monet2photo/trainA')):
+    temp = imread('Image/monet2photo/trainA/'+filename, pilmode="RGB")
+    temp = resize(temp, (128, 128))
+    images_a.append(np.array(temp, dtype=float))
+
+images_b = []
+for filename in tqdm(os.listdir('Image/monet2photo/trainB')):
+    temp = imread('Image/monet2photo/trainB/'+filename, pilmode="RGB")
+    temp = resize(temp, (128, 128))
+    images_b.append(np.array(temp, dtype=float))
+
 # Normalise RGB intensities, reshape and forced into array
 X_a = [1.0/255*x for x in images_a]
-X_a = [x.reshape(64, 64, 3) for x in X_a]
+X_a = [x.reshape(128, 128, 3) for x in X_a]
 X_a = np.array(X_a)
 del(images_a)
 
 # Normalise RGB intensities, reshape and forced into array
 X_b = [1.0/255*x for x in images_b]
-X_b = [x.reshape(64, 64, 3) for x in X_b]
+X_b = [x.reshape(128, 128, 3) for x in X_b]
 X_b = np.array(X_b)
 del(images_b)
 
