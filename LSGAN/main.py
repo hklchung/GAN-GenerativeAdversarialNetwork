@@ -20,18 +20,31 @@ import tensorflow as tf
 from imageio import imread
 
 #===========================Load and resize image==============================
-filepath = '../DCGAN/Image/Train/tenk_celebs/100k'
+filepath = '../DCGAN/Image/Train/Resized'
 images = []
+# Grab images from folder
 for filename in tqdm(os.listdir(filepath)):
-    temp = imread(filepath+'/'+filename, pilmode="RGB")
-    temp = resize(temp, (32, 32))
+    temp = np.array(img_to_array(load_img(filepath+'/'+filename)), dtype=float)
+    hor = 32 - temp.shape[0]
+    ver = 32 - temp.shape[1]
+    if hor%2 != 0:
+        temp = np.pad(temp, ((hor//2 + 1, hor//2), (ver//2, ver//2), (0, 0)),
+              mode='constant', constant_values=0)
+    elif ver%2 != 0:
+        temp = np.pad(temp, ((hor//2, hor//2), (ver//2 + 1, ver//2), (0, 0)),
+              mode='constant', constant_values=0)
+    else:
+    # Pad resized images with zeros such that they are all 32x32x3
+        temp = np.pad(temp, ((hor//2, hor//2), (ver//2, ver//2), (0, 0)),
+              mode='constant', constant_values=0)
+    # Store images into a list
     images.append(np.array(temp, dtype=float))
-    
-images = [1.0/255*x for x in images]
-images = [x.reshape(32, 32, 3) for x in images]
-images = np.array(images)
 
-X = images
+# Normalise RGB intensities, reshape and forced into array
+X = [(x-127.5)/127.5 for x in images]
+X = [x.reshape(32, 32, 3) for x in X]
+X = np.array(X)
+
 del(images)
 
 #=========================Discriminator model==================================
@@ -105,7 +118,7 @@ G.add(LeakyReLU(alpha=0.3))
 # In: 8*dim x 8*dim x depth/8
 # Out: 32 x 32 x 3 RGB scale image [0.0,1.0] per pixel
 G.add(Conv2DTranspose(3, 5, padding='same', kernel_initializer='glorot_normal'))
-G.add(Activation('sigmoid'))
+G.add(Activation('tanh'))
 
 # Print out architecture of the generator
 G.summary()
