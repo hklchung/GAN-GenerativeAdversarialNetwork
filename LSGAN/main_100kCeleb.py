@@ -3,7 +3,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from keras.layers import Dense, Activation, Dropout, Flatten, Reshape, LeakyReLU
+from keras.layers import Dense, Activation, Dropout, Flatten, Reshape, LeakyReLU, ReLU
 from keras.layers import Conv2D, Conv2DTranspose, UpSampling2D, BatchNormalization, ZeroPadding2D
 from keras.models import Sequential, load_model
 from keras.optimizers import RMSprop, Adam
@@ -82,7 +82,7 @@ plot_model(D, to_file='discriminator.png', show_shapes=True, show_layer_names=Tr
 # Define architecture of the generator (fraudster AI)
 # Note: with each layer, the image gets larger but with reduced depth
 dropout = 0.5
-depth = 64*8
+depth = 64*4
 dim = 8
 noise_vec = 256
 G = Sequential()
@@ -108,12 +108,6 @@ G.add(UpSampling2D())
 G.add(Conv2DTranspose(int(depth/4), 5, padding='same', kernel_initializer='glorot_normal'))
 G.add(BatchNormalization(momentum=0.8))
 G.add(LeakyReLU(alpha=0.3))
-# Forth layer
-# In: 4*dim x 4*dim x depth/4
-# Out: 8*dim x 8*dim x depth/8
-G.add(Conv2DTranspose(int(depth/8), 5, padding='same', kernel_initializer='glorot_normal'))
-G.add(BatchNormalization(momentum=0.8))
-G.add(LeakyReLU(alpha=0.3))
 # Output layer
 # In: 8*dim x 8*dim x depth/8
 # Out: 32 x 32 x 3 RGB scale image [0.0,1.0] per pixel
@@ -127,8 +121,8 @@ plot_model(G, to_file='generator.png', show_shapes=True, show_layer_names=True)
 
 #============================Optimiser=========================================
 # Define optimisers - optimisr1 will be used for the discriminator and generator
-optimizer1 = Adam(lr=0.0002, beta_1=0.5)
-optimizer2 = Adam(lr=0.0002, beta_1=0.5)
+optimizer1 = RMSprop(lr=0.0008, clipvalue=1.0, decay=6e-8)
+optimizer2 = RMSprop(lr=0.0004, clipvalue=1.0, decay=3e-8)
 
 D.compile(loss='mse', optimizer=optimizer1,metrics=['accuracy'])
 
@@ -146,7 +140,7 @@ def plot_output(noise, step):
     filename = "GANmodel_%d.png" % step
     
     images = G.predict(noise)
-    images = np.array([((x*127.5)+127.5)/255 for x in images])
+    images = np.array([(x+1)/2.0 for x in images])
 
     plt.figure(figsize=(10,10))
     for i in range(images.shape[0]):
@@ -273,3 +267,18 @@ d_loss_ls, gan_loss_ls, d_acc_ls, gan_acc_ls = train_gan(X=X, model=GAN, batch_s
                                                          noise_len=256)
 plot_loss(d_loss_ls, gan_loss_ls)
 plot_accuracy(d_acc_ls, gan_acc_ls)
+
+#================================Save model====================================
+model_json = GAN.to_json()
+with open("LSGAN_100kCelebs_model.json", "w") as json_file:
+    json_file.write(model_json)
+GAN.save_weights("LSGAN_100kCelebs_model.h5")
+
+#================================Result GIF====================================
+import imageio
+result_pwd = 'Result/100kCelebs/'
+output_pwd = os.path.abspath(os.getcwd())
+images = []
+for filename in tqdm(os.listdir(result_pwd)):
+    images.append(imageio.imread(result_pwd + '/' + filename))
+imageio.mimsave(output_pwd + '/' + result_pwd + '/' + 'LSGAN_100kCelebs.gif', images)
