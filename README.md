@@ -29,6 +29,7 @@
   * [Prerequisites](#prerequisites)
 * [Usage](#usage)
   * [DCGAN](#dcgan)
+  * [LSGAN](#lsgan)
 * [Contributing](#contributing)
 * [Contact](#contact)
 * [Known Issues](#known-issues)
@@ -63,9 +64,11 @@ Hope you are now excited to start building GAN on your machine. To get started, 
 
 <!-- DCGAN -->
 ### DCGAN
+<details><summary>Click to expand</summary>
+<p>
 DCGAN is also known as Deep Convolutional Generative Adversarial Network, where two models are trained simultaneously by an adversarial process. A generator learns to create images that look real, while a discriminator learns to tell the real and fake images apart. During training, the generator progressively becomes better at creating images that look real, while the discriminator becomes better at telling them apart. The process reaches equilibrium when the discriminator can no longer distinguish real images from fakes, i.e. accuracy maintains at 50%.
 
-Results from DCGAN training at with below listed configurations.
+Results from DCGAN training with below listed configurations.
 <table>
   <tbody>
     <tr>
@@ -129,7 +132,49 @@ You can also try to configure the below settings.
 7. Soft labelling
 
 One of the key limitations of DCGAN is that it occupies a lot of memory during training and typically only works well with small, thumbnail sized images.
+</p>
+</details>
 
+<!-- LSGAN -->
+### LSGAN
+<details><summary>Click to expand</summary>
+<p>
+LSGAN is also known as Least Squares Generative Adversarial Network. This architecture was developed and described by Mao et al., 2016 in the paper<a href="https://arxiv.org/abs/1611.04076"><strong>Least Squares Generative Adversarial Networks</strong></a>, where the author described LSGAN as <i>"...able to generate higher quality images than regular GANs ... LSGANs perform more stable during the learning process."</i>
+
+LSGAN is heuristically identical with DCGAN with below changes in code:
+* 'linear' for activation in the discriminator
+* 'tanh' for activation in the generator
+* 'mse' for loss metric rather than binary corssentropy  
+
+Results from LSGAN training with below listed configurations.
+<table>
+  <tbody>
+    <tr>
+      <th>Results</th>
+      <th>Configuration</th>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/Result/100kCelebs/GANmodel_1900.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 16</li>
+          <li>epoch = 2000</li>
+          <li>noise_len = 256</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Below is a summary of what we have done in our LSGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/main_100kCeleb.py"><strong>main.py</strong></a>.
+1. Resized celebrity images to 32x32x3
+2. Load images into session and normalised RGB intensities into range -1 to 1
+3. Created the discriminator and generator models
+4. Stacked the two models into GAN
+5. Train the GAN (process as per DCGAN, see above)
+</p>
+</details>
 
 <!-- CONTRIBUTING -->
 ## Contributing
