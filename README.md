@@ -173,6 +173,13 @@ Below is a summary of what we have done in our LSGAN code file <a href="https://
 3. Created the discriminator and generator models
 4. Stacked the two models into GAN
 5. Train the GAN (process as per DCGAN, see above)
+
+You can also try to configure the below settings.
+1. GAN network architecture
+2. Values of dropout, LeakyReLU alpha, BatchNormalization momentum
+3. Change optimiser from RMSProp to Adam
+4. Try various kinds of noise sampling, e.g. uniform sampling
+5. Soft labelling
 </p>
 </details>
 
