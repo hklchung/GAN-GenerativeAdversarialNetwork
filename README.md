@@ -130,6 +130,7 @@ You can also try to configure the below settings.
 5. Change optimisation metric from 'binary_crossentropy' to Wasserstein loss function
 6. Try various kinds of noise sampling, e.g. uniform sampling
 7. Soft labelling
+8. Separate batches of real and fake images when training discriminator
 
 One of the key limitations of DCGAN is that it occupies a lot of memory during training and typically only works well with small, thumbnail sized images.
 </p>
@@ -180,6 +181,7 @@ You can also try to configure the below settings.
 3. Change optimiser from RMSProp to Adam
 4. Try various kinds of noise sampling, e.g. uniform sampling
 5. Soft labelling
+6. Separate batches of real and fake images when training discriminator
 </p>
 </details>
 
