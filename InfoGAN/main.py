@@ -23,7 +23,6 @@ Redistribution and use in source and binary forms, with or without
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 """
-
 import os
 import numpy as np
 import random
@@ -33,86 +32,135 @@ from keras.layers import Input, Dense, Activation, Dropout, Flatten, Reshape, Le
 from keras.layers import Conv2D, Conv2DTranspose, UpSampling2D, BatchNormalization, ZeroPadding2D
 from keras.models import Sequential, load_model, Model
 from keras.optimizers import RMSprop, Adam
-from keras.callbacks import TensorBoard
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from keras.utils.vis_utils import plot_model
 from keras.utils import to_categorical
-from keras import backend
-from skimage.color import rgb2lab, lab2rgb, rgb2gray
-from skimage.io import imsave
-from skimage.transform import resize
 from sklearn.utils import shuffle
-from PIL import Image, ImageOps
-import tensorflow as tf
-from imageio import imread
 from keras.datasets import mnist
 
 #=============================Load MNIST dataset===============================
+# Load MNIST dataset
 (X, Y), (_, _) = mnist.load_data()
+# Normalise values to range 0 ~ 1
 X = 1.0/255*X
 X = np.array([x.reshape(28, 28, 1) for x in X])
+# One-hot encode labels
 Y = to_categorical(Y, 10)
 
+# Our input vector for generator = 100D noise + 10D category info
 latent_dim = 110
 #====================Discriminator and Auxiliary model=========================
-optimizer = RMSprop(lr=0.0008, clipvalue=1.0, decay=6e-8)
+# Define input shape of our MNIST images
 input_disc = Input(shape = (28, 28, 1))
- 
+
+# 1st Conv layer
+# In: 28 x 28 x 1
+# Out: 28 x 28 x 16
 conv_1 = Conv2D(16, 3, padding = 'same', activation = LeakyReLU(alpha=0.2), kernel_initializer='random_normal')(input_disc)
 batch_norm1 = BatchNormalization()(conv_1)
+# 1st Pooling layer
+# In: 28 x 28 x 16
+# Out: 14 x 14 x 16
 pool_1 = AveragePooling2D(strides = (2,2))(batch_norm1)
+# 2nd Conv layer
+# In: 14 x 14 x 16
+# Out: 14 x 14 x 32
 conv_2 = Conv2D(32, 3, padding = 'same', activation = LeakyReLU(alpha=0.2), kernel_initializer='random_normal')(pool_1)
 batch_norm2 = BatchNormalization()(conv_2)
+# 2nd Pooling layer
+# In: 14 x 14 x 32
+# Out: 7 x 7 x 32
 pool_2 = AveragePooling2D(strides = (2,2))(batch_norm2)
+# 3rd Conv layer
+# In: 7 x 7 x 32
+# Out: 7 x 7 x 64
 conv_3 = Conv2D(64, 3, padding = 'same', activation = LeakyReLU(alpha=0.2), kernel_initializer='random_normal')(pool_2)
 batch_norm3 = BatchNormalization()(conv_3)
+# 3rd Pooling layer
+# In: 7 x 7 x 64
+# Out: 3 x 3 x 64
 pool_3 = AveragePooling2D(strides = (2,2))(conv_3)
+# Flatten layer
+# In: 3 x 3 x 64
+# Out: 1 x 576
 flatten_1 = Flatten()(pool_3)
+# Discriminator output
 output = Dense(1, activation = 'sigmoid', kernel_initializer='random_normal')(flatten_1)
-q_output_catgorical = Dense(10, activation = 'softmax')(flatten_1)
-    
+# Define discriminator input and output
 disc_model = Model(input_disc, output)
-disc_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-    
+
+# Auxiliary model output
+q_output_catgorical = Dense(10, activation = 'softmax')(flatten_1)
+# Define auxiliary model input and output
 q_model = Model(input_disc, q_output_catgorical)
-q_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-    
+
+# Note that these two models are one and the same with different final layers
+# Print out architecture of the discriminator    
 disc_model.summary()
+# Print out architecture of the auxiliary model
 q_model.summary()
- 
-plot_model(disc_model, show_shapes=True, show_layer_names=True)
-plot_model(q_model, show_shapes=True, show_layer_names=True)
+
+# Save model architecture as .PNG 
+plot_model(disc_model, to_file='discriminator.png', show_shapes=True, show_layer_names=True)
+plot_model(q_model, to_file='auxiliary.png', show_shapes=True, show_layer_names=True)
 
 #==========================Generator model=====================================
-optimizer = RMSprop(lr=0.0008, clipvalue=1.0, decay=6e-8)
+# Define input shape of our input vector (100D noise + 10D category info)
 input_gen = Input(shape = (latent_dim,))
-dense1 = Reshape((7,7,16))(Dense(7*7*16)(input_gen))
- 
+# 1st dense layer
+# In: 1 x 110
+# Out: 7 x 7 x 16
+dense1 = Reshape((7,7,16))(Dense(7*7*16)(input_gen)) 
 batch_norm_1 = BatchNormalization()(dense1)
+# 1st Conv Transpose layer
+# In: 7 x 7 x 16
+# Out: 14 x 14 x 128
 trans_1 = Conv2DTranspose(128, 3, padding='same', activation=LeakyReLU(alpha=0.2), strides=(2, 2), kernel_initializer='random_normal')(batch_norm_1)
 batch_norm_2 = BatchNormalization()(trans_1)
+# 2nd Conv Transpose layer
+# In: 14 x 14 x 128
+# Out: 28 x 28 x 128
 trans_2 = Conv2DTranspose(128, 3, padding='same', activation=LeakyReLU(alpha=0.2), strides=(2, 2), kernel_initializer='random_normal')(batch_norm_2)
+# 1st Conv layer
+# In: 28 x 28 x 128
+# Out: 28 x 28 x 1
 output = Conv2D(1, (28,28), activation='sigmoid', padding='same', kernel_initializer='random_normal')(trans_2)
+
+# Define generator input and output
 gen_model = Model(input_gen, output)
-gen_model.compile(loss='binary_crossentropy', optimizer=optimizer)
+# Print out architecture of the generator
 gen_model.summary()
 
-plot_model(gen_model, show_shapes=True, show_layer_names=True)
+# Save model architecture as .PNG 
+plot_model(gen_model, to_file='generator.png', show_shapes=True, show_layer_names=True)
 
 #===============Combine Discriminator and Auxiliary models=====================
+# Define optimisers - optimisr1 will be used for all component models
+optimizer = RMSprop(lr=0.0008, clipvalue=1.0, decay=6e-8)
+
+disc_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+q_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+gen_model.compile(loss='binary_crossentropy', optimizer=optimizer)
+
+# Define architecture of InfoGAN
+# Starts with generator input = 110D vector
 inputs = Input(shape = (latent_dim,)) 
+# Generator output
 gen_img = gen_model(inputs)
-    
+
 disc_model.trainable = False
 
+# Generator output is the input for both discriminator and auxiliary models
 disc_outs = disc_model(gen_img)
 q_outs = q_model(gen_img)
-    
+
+# Define InfoGAN inout and output
 comb_model = Model(inputs, [disc_outs, q_outs])
 comb_model.compile(loss=['binary_crossentropy', 'categorical_crossentropy'], optimizer=optimizer, metrics=['accuracy'])
-comb_model.summary()
 
-plot_model(comb_model, show_shapes=True, show_layer_names=True)
+# Print out architecture of GAN
+comb_model.summary()
+# Save model architecture as .PNG 
+plot_model(comb_model, to_file='InfoGAN.png', show_shapes=True, show_layer_names=True)
     
 #==============================Train InfoGAN===================================
 batch_size = 16
@@ -152,3 +200,8 @@ for i in range(iterations):
     x = np.hstack((noise, random_label))
  
     gan_loss = comb_model.train_on_batch(x, [np.ones((batch_size,1)), random_label])
+    
+    log_msg = "epoch %d: [D loss: %f, acc: %f]" % (i, d_loss[0], d_loss[1])
+    log_msg = "%s  [Q loss: %f, acc: %f]" % (log_msg, q_loss[0], q_loss[1])
+    log_msg = "%s  [GAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
+    print(log_msg)
