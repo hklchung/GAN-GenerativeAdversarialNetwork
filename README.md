@@ -30,6 +30,7 @@
 * [Usage](#usage)
   * [DCGAN](#dcgan)
   * [LSGAN](#lsgan)
+  * [InfoGAN](#infogan)
 * [Contributing](#contributing)
 * [Contact](#contact)
 * [Known Issues](#known-issues)
@@ -182,6 +183,16 @@ You can also try to configure the below settings.
 4. Try various kinds of noise sampling, e.g. uniform sampling
 5. Soft labelling
 6. Separate batches of real and fake images when training discriminator
+</p>
+</details>
+
+<!-- INFOGAN -->
+### InfoGAN
+<details><summary>Click to expand</summary>
+<p>
+InfoGAN is an information-theoretic extention to the Generative Adversarial Network. This architecture was developed and described by Chen et al., 2016 in the paper <a href="https://arxiv.org/abs/1606.03657"><strong>InfoGAN: Interpretable Representation Learning by Information Maximizing Generative Adversarial Nets</strong></a>, where the author described InfoGAN as <i>"... a generative adversarial network that also maximizes the mutual information between a small subset of the latent variables and the observation."</i>
+
+In a well-trained vanilla GAN, the generator model randomly generate images that cannot be distinguished by the discriminator from the rest of the learning set. There is no control over what type of images would be generated. With InfoGAN, this becomes possible through manipulation of the input matrix to the generator.
 </p>
 </details>
 
