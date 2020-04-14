@@ -161,11 +161,30 @@ comb_model.compile(loss=['binary_crossentropy', 'categorical_crossentropy'], opt
 comb_model.summary()
 # Save model architecture as .PNG 
 plot_model(comb_model, to_file='InfoGAN.png', show_shapes=True, show_layer_names=True)
+
+#==========================Plot image function=================================
+def plot_output(input_110, step):
+    filename = "GANmodel_%d" % step
+    filename += "_testnum_%d" % test_num
+    
+    images = gen_model.predict(input_110)
+
+    plt.figure(figsize=(10,10))
+    for i in range(images.shape[0]):
+        plt.subplot(4, 4, i+1)
+        image = images[i, :, :, :]
+        image = image.reshape(X.shape[1], X.shape[2])
+        plt.imshow(image)
+        plt.axis('off')
+    plt.tight_layout()
+    plt.savefig(filename)
+    plt.close('all')
     
 #==============================Train InfoGAN===================================
 batch_size = 16
 latent_dim = 100 + 10
 iterations = 60000
+save_interval = 3000
 
 for i in range(iterations):
     #===============Train discriminator and auxiliary models===================
@@ -205,3 +224,11 @@ for i in range(iterations):
     log_msg = "%s  [Q loss: %f, acc: %f]" % (log_msg, q_loss[0], q_loss[1])
     log_msg = "%s  [GAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
     print(log_msg)
+    
+    # Save ouputs
+    if save_interval>0 and (i+1)%save_interval==0:
+        test_num = np.random.randint(0,10)
+        test_label = to_categorical(np.full((batch_size, 1), test_num), 10)
+        noise = np.random.normal(0, 1, size=(batch_size, 100))
+        test_input = np.hstack((noise, test_label))
+        plot_output(input_110=test_input, step=(i+1))
