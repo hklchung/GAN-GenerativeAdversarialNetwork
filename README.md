@@ -140,7 +140,7 @@ One of the key limitations of DCGAN is that it occupies a lot of memory during t
 ### LSGAN
 <details><summary>Click to expand</summary>
 <p>
-LSGAN is also known as Least Squares Generative Adversarial Network. This architecture was developed and described by Mao et al., 2016 in the paper<a href="https://arxiv.org/abs/1611.04076"><strong>Least Squares Generative Adversarial Networks</strong></a>, where the author described LSGAN as <i>"...able to generate higher quality images than regular GANs ... LSGANs perform more stable during the learning process."</i>
+LSGAN is also known as Least Squares Generative Adversarial Network. This architecture was developed and described by Mao et al., 2016 in the paper <a href="https://arxiv.org/abs/1611.04076"><strong>Least Squares Generative Adversarial Networks</strong></a>, where the author described LSGAN as <i>"...able to generate higher quality images than regular GANs ... LSGANs perform more stable during the learning process."</i>
 
 LSGAN is heuristically identical with DCGAN with below changes in code:
 * 'linear' for activation in the discriminator
