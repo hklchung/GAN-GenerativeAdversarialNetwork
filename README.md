@@ -194,6 +194,9 @@ InfoGAN is an information-theoretic extention to the Generative Adversarial Netw
 
 In a well-trained vanilla GAN, the generator model randomly generate images that cannot be distinguished by the discriminator from the rest of the learning set. There is no control over what type of images would be generated. With InfoGAN, this becomes possible through manipulation of the input matrix to the generator.
 
+So how do we control the output in InfoGAN?
+<img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/InfoGAN_idea.png?raw=true" height="550">
+
 Results from InfoGAN training with below listed configurations.
 <table>
   <tbody>
