@@ -193,6 +193,42 @@ You can also try to configure the below settings.
 InfoGAN is an information-theoretic extention to the Generative Adversarial Network. This architecture was developed and described by Chen et al., 2016 in the paper <a href="https://arxiv.org/abs/1606.03657"><strong>InfoGAN: Interpretable Representation Learning by Information Maximizing Generative Adversarial Nets</strong></a>, where the author described InfoGAN as <i>"... a generative adversarial network that also maximizes the mutual information between a small subset of the latent variables and the observation."</i>
 
 In a well-trained vanilla GAN, the generator model randomly generate images that cannot be distinguished by the discriminator from the rest of the learning set. There is no control over what type of images would be generated. With InfoGAN, this becomes possible through manipulation of the input matrix to the generator.
+
+Results from InfoGAN training with below listed configurations.
+<table>
+  <tbody>
+    <tr>
+      <th>Results</th>
+      <th>Configuration</th>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/Result/GANmodel_21000.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 16</li>
+          <li>epoch = 21000</li>
+          <li>noise_len = 100</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Below is a summary of what we have done in our InfoGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/main.py"><strong>main.py</strong></a>.
+1. Load MNIST dataset (default shape 28 x 28 x 1)
+2. Normalised intensities into range 0 to 1
+3. Created the discriminator, auxiliary and generator models
+4. Stacked the three models into InfoGAN
+5. Train the GAN by repeating the following
+  * Create and stack 100D noise vectors and 10D one-hot encoding vectors (representing random value between 0 and 9)
+  * Feed the stacked vectors (variable: gen_input) into the generator to create n number of fake images
+  * Train the discriminator with this batch of fake images
+  * Randomly select n number of real images
+  * Train the discriminator with this batch of real images
+  * Then freeze the weights on the discriminator
+  * Using the same gen_input variable and force all labels to be 1 (for "real images")
+  * Train the GAN with this batch of images
 </p>
 </details>
 
