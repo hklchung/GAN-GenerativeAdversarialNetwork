@@ -196,6 +196,7 @@ In a well-trained vanilla GAN, the generator model randomly generate images that
 
 So how do we control the output in InfoGAN?
 <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/InfoGAN_idea.png?raw=true" height="550">
+
 The above diagram outlines the structure of the network in InfoGAN. We can see that InfoGAN is an extention of DCGAN with new components such as the latent codes c (also known as control vector/variables) and the auxiliary distribution Q(c|X) output which comes from a modified discriminator model. Here the discriminator box denotes a single network of shared weights for 
 * A discriminator model that validates the input images
 * An auxiliary model that predicts the control variables
