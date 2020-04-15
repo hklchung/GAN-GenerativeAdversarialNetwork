@@ -50,48 +50,40 @@ Y = to_categorical(Y, 10)
 latent_dim = 110
 #====================Discriminator and Auxiliary model=========================
 # Define input shape of our MNIST images
-input_disc = Input(shape = (28, 28, 1))
+img_shape = (28,28,1)
+img = Input(shape=img_shape)
 
-# 1st Conv layer
-# In: 28 x 28 x 1
-# Out: 28 x 28 x 16
-conv_1 = Conv2D(16, 3, padding = 'same', activation = LeakyReLU(alpha=0.2), kernel_initializer='random_normal')(input_disc)
-batch_norm1 = BatchNormalization()(conv_1)
-# 1st Pooling layer
-# In: 28 x 28 x 16
-# Out: 14 x 14 x 16
-pool_1 = AveragePooling2D(strides = (2,2))(batch_norm1)
-# 2nd Conv layer
-# In: 14 x 14 x 16
-# Out: 14 x 14 x 32
-conv_2 = Conv2D(32, 3, padding = 'same', activation = LeakyReLU(alpha=0.2), kernel_initializer='random_normal')(pool_1)
-batch_norm2 = BatchNormalization()(conv_2)
-# 2nd Pooling layer
-# In: 14 x 14 x 32
-# Out: 7 x 7 x 32
-pool_2 = AveragePooling2D(strides = (2,2))(batch_norm2)
-# 3rd Conv layer
-# In: 7 x 7 x 32
-# Out: 7 x 7 x 64
-conv_3 = Conv2D(64, 3, padding = 'same', activation = LeakyReLU(alpha=0.2), kernel_initializer='random_normal')(pool_2)
-batch_norm3 = BatchNormalization()(conv_3)
-# 3rd Pooling layer
-# In: 7 x 7 x 64
-# Out: 3 x 3 x 64
-pool_3 = AveragePooling2D(strides = (2,2))(conv_3)
-# Flatten layer
-# In: 3 x 3 x 64
-# Out: 1 x 576
-flatten_1 = Flatten()(pool_3)
-# Discriminator output
-output = Dense(1, activation = 'sigmoid', kernel_initializer='random_normal')(flatten_1)
-# Define discriminator input and output
-disc_model = Model(input_disc, output)
+# Shared layers between discriminator and auxiliary models
+model = Sequential()
+model.add(Conv2D(64, kernel_size=3, strides=2, input_shape=img_shape, padding="same"))
+model.add(LeakyReLU(alpha=0.2))
+model.add(Dropout(0.25))
+model.add(Conv2D(128, kernel_size=3, strides=2, padding="same"))
+model.add(ZeroPadding2D(padding=((0,1),(0,1))))
+model.add(LeakyReLU(alpha=0.2))
+model.add(Dropout(0.25))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Conv2D(256, kernel_size=3, strides=2, padding="same"))
+model.add(LeakyReLU(alpha=0.2))
+model.add(Dropout(0.25))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Conv2D(512, kernel_size=3, strides=2, padding="same"))
+model.add(LeakyReLU(alpha=0.2))
+model.add(Dropout(0.25))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Flatten())
 
-# Auxiliary model output
-q_output_catgorical = Dense(10, activation = 'softmax')(flatten_1)
-# Define auxiliary model input and output
-q_model = Model(input_disc, q_output_catgorical)
+img_embedding = model(img)
+
+# Discriminator
+disc = Dense(1, activation='sigmoid')(img_embedding)
+
+# Auxiliary model
+aux = Dense(128, activation='relu')(img_embedding)
+label = Dense(10, activation='softmax')(aux)
+
+disc_model = Model(img, disc)
+q_model = Model(img, label)
 
 # Note that these two models are one and the same with different final layers
 # Print out architecture of the discriminator    
@@ -103,30 +95,28 @@ q_model.summary()
 plot_model(disc_model, to_file='discriminator.png', show_shapes=True, show_layer_names=True)
 plot_model(q_model, to_file='auxiliary.png', show_shapes=True, show_layer_names=True)
 
+del(model)
 #==========================Generator model=====================================
-# Define input shape of our input vector (100D noise + 10D category info)
-input_gen = Input(shape = (latent_dim,))
-# 1st dense layer
-# In: 1 x 110
-# Out: 7 x 7 x 16
-dense1 = Reshape((7,7,16))(Dense(7*7*16)(input_gen)) 
-batch_norm_1 = BatchNormalization()(dense1)
-# 1st Conv Transpose layer
-# In: 7 x 7 x 16
-# Out: 14 x 14 x 128
-trans_1 = Conv2DTranspose(128, 3, padding='same', activation=LeakyReLU(alpha=0.2), strides=(2, 2), kernel_initializer='random_normal')(batch_norm_1)
-batch_norm_2 = BatchNormalization()(trans_1)
-# 2nd Conv Transpose layer
-# In: 14 x 14 x 128
-# Out: 28 x 28 x 128
-trans_2 = Conv2DTranspose(128, 3, padding='same', activation=LeakyReLU(alpha=0.2), strides=(2, 2), kernel_initializer='random_normal')(batch_norm_2)
-# 1st Conv layer
-# In: 28 x 28 x 128
-# Out: 28 x 28 x 1
-output = Conv2D(1, (28,28), activation='sigmoid', padding='same', kernel_initializer='random_normal')(trans_2)
+model = Sequential()
 
+model.add(Dense(128 * 7 * 7, activation="relu", input_dim=latent_dim))
+model.add(Reshape((7, 7, 128)))
+model.add(BatchNormalization(momentum=0.8))
+model.add(UpSampling2D())
+model.add(Conv2D(128, kernel_size=3, padding="same"))
+model.add(Activation("relu"))
+model.add(BatchNormalization(momentum=0.8))
+model.add(UpSampling2D())
+model.add(Conv2D(64, kernel_size=3, padding="same"))
+model.add(Activation("relu"))
+model.add(BatchNormalization(momentum=0.8))
+model.add(Conv2D(1, kernel_size=3, padding='same'))
+model.add(Activation("sigmoid"))
+
+gen_input = Input(shape=(latent_dim,))
+fake_image = model(gen_input)
 # Define generator input and output
-gen_model = Model(input_gen, output)
+gen_model = Model(gen_input, fake_image)
 # Print out architecture of the generator
 gen_model.summary()
 
@@ -165,16 +155,15 @@ plot_model(comb_model, to_file='InfoGAN.png', show_shapes=True, show_layer_names
 #==========================Plot image function=================================
 def plot_output(input_110, step):
     filename = "GANmodel_%d" % step
-    filename += "_testnum_%d" % test_num
     
     images = gen_model.predict(input_110)
 
     plt.figure(figsize=(10,10))
     for i in range(images.shape[0]):
-        plt.subplot(4, 4, i+1)
+        plt.subplot(10, 10, i+1)
         image = images[i, :, :, :]
         image = image.reshape(X.shape[1], X.shape[2])
-        plt.imshow(image)
+        plt.imshow(image, cmap='gray')
         plt.axis('off')
     plt.tight_layout()
     plt.savefig(filename)
@@ -188,6 +177,8 @@ save_interval = 3000
 
 for i in range(iterations):
     #===============Train discriminator and auxiliary models===================
+    disc_model.trainable = True
+    
     images_index = np.random.randint(0, X.shape[0], size = (batch_size))
     images_real = X[images_index]
     images_label = Y[images_index]
@@ -196,39 +187,25 @@ for i in range(iterations):
     noise = np.random.normal(0, 1, size=(batch_size, 100))
     images_fake = gen_model.predict(np.hstack((noise, random_label)))
     
-    x = np.concatenate((images_real, images_fake))
-    # Create labels
-    disc_y = np.ones([2*batch_size, 1]) 
-    disc_y[batch_size:, :] = 0
-    q_y = np.concatenate((images_label, random_label))
-    # Shuffle the real and fake images
-    x,disc_y, q_y = shuffle(x,disc_y, q_y)
+    d_loss_real = disc_model.train_on_batch(images_real, np.ones([batch_size, 1]))
+    d_loss_fake = disc_model.train_on_batch(images_fake, np.zeros([batch_size, 1]))
     
-    disc_trainable = True
- 
-    d_loss = disc_model.train_on_batch(x, disc_y)
-    q_loss = q_model.train_on_batch(x, q_y)
- 
+    d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+    
     #==========================Train InfoGAN===================================
-    random_label = to_categorical(np.random.randint(0,10,batch_size), 10)
-    noise = np.random.normal(0, 1, size=(batch_size, 100)) 
-    images_fake = gen_model.predict(np.hstack((noise, random_label)))
+    disc_model.trainable = False
     
-    disc_trainable = False
- 
-    x = np.hstack((noise, random_label))
- 
-    gan_loss = comb_model.train_on_batch(x, [np.ones((batch_size,1)), random_label])
+    gen_input = np.concatenate((noise, random_label), axis=1)
+    gan_loss = comb_model.train_on_batch(gen_input, [np.ones([batch_size, 1]), random_label])
     
-    log_msg = "epoch %d: [D loss: %f, acc: %f]" % (i, d_loss[0], d_loss[1])
-    log_msg = "%s  [Q loss: %f, acc: %f]" % (log_msg, q_loss[0], q_loss[1])
-    log_msg = "%s  [GAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
+    log_msg = "epoch %d: [D loss (real): %f, acc: %f]" % (i, d_loss_real[0], d_loss_real[1])
+    log_msg = "%s  [D loss (fake): %f, acc: %f]" % (log_msg, d_loss_fake[0], d_loss_fake[1])
     print(log_msg)
     
     # Save ouputs
     if save_interval>0 and (i+1)%save_interval==0:
-        test_num = np.random.randint(0,10)
-        test_label = to_categorical(np.full((batch_size, 1), test_num), 10)
-        noise = np.random.normal(0, 1, size=(batch_size, 100))
+        test_label = np.concatenate(([np.concatenate(np.full((10, 1), x)) for x in range(0, 10)]))
+        test_label = to_categorical(test_label)
+        noise = np.random.normal(0, 1, size=(100, 100))
         test_input = np.hstack((noise, test_label))
         plot_output(input_110=test_input, step=(i+1))
