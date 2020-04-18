@@ -203,7 +203,7 @@ The above diagram outlines the structure of the network in InfoGAN. We can see t
 
 At each step of training, we would first train the discriminator to learn to separate real and fake images. Then we freeze the weights on the discriminator and train the generator to produce fake images, given a set of control variables. The discriminator will then tell us how bad the fake images were and we update the weights in the generator to improve the quality of fake images. 
 
-Results from InfoGAN training with below listed configurations.
+Results from InfoGAN training with below listed configurations. Please note that each row of images denotes one configuration of the control vector.
 <table>
   <tbody>
     <tr>
