@@ -145,7 +145,7 @@ disc_class_inputs = Input(shape = (10,))
 disc_outs = disc_model([disc_class_inputs, gen_img])
 
 # Define CGAN inout and output
-comb_model = Model(inputs, disc_outs)
+comb_model = Model([inputs, disc_class_inputs], disc_outs)
 comb_model.compile(loss=['mse'], optimizer=optimizer2, metrics=['accuracy'])
 
 # Print out architecture of GAN
