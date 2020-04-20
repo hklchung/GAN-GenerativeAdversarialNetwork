@@ -176,26 +176,28 @@ latent_dim = 256 + 10
 epoch = 1000
 save_interval = 100
 def train_gan(X, batch_size, epoch, save_interval):
+    batch_per_epoch = int(round(X.shape[0]/batch_size))
     for i in range(epoch):
-        #===============Train discriminator and auxiliary models===============
-        disc_model.trainable = True
-        
-        images_index = np.random.randint(0, X.shape[0], size = (batch_size))
-        images_real = X[images_index]
-        images_label = Y[images_index]
-        
-        random_label = to_categorical(np.random.randint(0,10,batch_size), 10)
-        noise = np.random.normal(0, 1, size=(batch_size, 256))
-        images_fake = gen_model.predict(np.hstack((noise, random_label)))
-        
-        d_loss_real = disc_model.train_on_batch([images_label, images_real], np.ones([batch_size, 1]))
-        d_loss_fake = disc_model.train_on_batch([random_label, images_fake], np.zeros([batch_size, 1]))
-        
-        #==========================Train CGAN==================================
-        disc_model.trainable = False
-        
-        gen_input = np.concatenate((noise, random_label), axis=1)
-        gan_loss = comb_model.train_on_batch([gen_input, random_label], np.ones([batch_size, 1]))
+        for j in tqdm(range(batch_per_epoch)):
+            #=============Train discriminator and auxiliary models=============
+            disc_model.trainable = True
+            
+            images_index = np.random.randint(0, X.shape[0], size = (batch_size))
+            images_real = X[images_index]
+            images_label = Y[images_index]
+            
+            random_label = to_categorical(np.random.randint(0,10,batch_size), 10)
+            noise = np.random.normal(0, 1, size=(batch_size, 256))
+            images_fake = gen_model.predict(np.hstack((noise, random_label)))
+            
+            d_loss_real = disc_model.train_on_batch([images_label, images_real], np.ones([batch_size, 1]))
+            d_loss_fake = disc_model.train_on_batch([random_label, images_fake], np.zeros([batch_size, 1]))
+            
+            #========================Train CGAN================================
+            disc_model.trainable = False
+            
+            gen_input = np.concatenate((noise, random_label), axis=1)
+            gan_loss = comb_model.train_on_batch([gen_input, random_label], np.ones([batch_size, 1]))
         
         log_msg = "epoch %d: [D loss (real): %f, acc: %f]" % (i, d_loss_real[0], d_loss_real[1])
         log_msg = "%s  [D loss (fake): %f, acc: %f]" % (log_msg, d_loss_fake[0], d_loss_fake[1])
