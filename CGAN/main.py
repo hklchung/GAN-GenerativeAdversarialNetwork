@@ -73,7 +73,6 @@ D.add(Dropout(dropout))
 D.add(Flatten())
 # Output layer
 D.add(Dense(1, kernel_initializer='glorot_normal'))
-# KEY CHANGE: linear activation (rather than sigmoid like in DCGAN)
 D.add(Activation('sigmoid'))
 
 disc_out = D(concatenate1)
@@ -93,30 +92,20 @@ depth = 64*2
 dim = 7
 noise_vec = 266
 gen_model = Sequential()
-# Input layer
-# In: 100
-# Out: dim x dim x depth
+
 gen_model.add(Dense(dim*dim*depth, input_dim=noise_vec, kernel_initializer='glorot_normal'))
 gen_model.add(BatchNormalization(momentum=0.9))
 gen_model.add(LeakyReLU(alpha=0.3))
 gen_model.add(Reshape((dim, dim, depth)))
 gen_model.add(Dropout(dropout))
-# Second layer
-# In: dim x dim x depth
-# Out: 2*dim x 2*dim x depth/2
+
 gen_model.add(UpSampling2D())
 gen_model.add(Conv2DTranspose(int(depth/2), 5, padding='same', kernel_initializer='glorot_normal'))
 gen_model.add(BatchNormalization(momentum=0.8))
 gen_model.add(LeakyReLU(alpha=0.3))
-# Third layer
-# In: 2*dim x 2*dim x depth/2
-# Out: 4*dim x 4*dim x depth/4
+
 gen_model.add(UpSampling2D())
-# Output layer
-# In: 4*dim x 4*dim x depth/4
-# Out: 28 x 28 x 1 RGB scale image [0.0,1.0] per pixel
 gen_model.add(Conv2DTranspose(1, 5, padding='same', kernel_initializer='glorot_normal'))
-# KEY CHANGE: tanh activation (rather than sigmoid like in DCGAN)
 gen_model.add(Activation('sigmoid'))
 
 # Print out architecture of the generator
@@ -145,6 +134,7 @@ comb_model.compile(loss=['binary_crossentropy'], optimizer=optimizer2, metrics=[
 comb_model.summary()
 # Save model architecture as .PNG 
 plot_model(comb_model, to_file='CGAN.png', show_shapes=True, show_layer_names=True)
+plot_model(comb_model, to_file='CGAN_expand.png', expand_nested=True, show_shapes=True, show_layer_names=True)
 
 #==========================Plot image function=================================
 def plot_output(input_266, step):
