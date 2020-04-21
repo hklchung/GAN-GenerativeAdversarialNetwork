@@ -163,6 +163,17 @@ def plot_output(input_266, step):
     plt.savefig(filename)
     plt.close('all')
     
+#==========================Plot loss function==================================
+def plot_loss(d_performance, gan_performance, jump=100):
+    plt.figure(figsize=(10, 10))
+    plt.plot(d_performance[0::jump], label='discriminator')
+    plt.plot(gan_performance[0::jump], label='GAN')
+    plt.xlabel('epoch ({})'.format(jump))
+    plt.ylabel('loss')
+    plt.legend()
+    plt.savefig('loss_over_epoch.png')
+    plt.close('all')
+    
 #================================Train CGAN====================================
 batch_size = 16
 latent_dim = 256 + 10
@@ -170,6 +181,8 @@ epoch = 1000
 save_interval = 100
 def train_gan(X, batch_size, epoch, save_interval):
     batch_per_epoch = int(round(X.shape[0]/batch_size))
+    d_loss_hist = []
+    gan_loss_hist = []
     for i in range(epoch):
         for j in tqdm(range(batch_per_epoch)):
             #=============Train discriminator and auxiliary models=============
@@ -186,6 +199,8 @@ def train_gan(X, batch_size, epoch, save_interval):
             d_loss_real = disc_model.train_on_batch([images_label, images_real], np.ones([batch_size, 1]))
             d_loss_fake = disc_model.train_on_batch([random_label, images_fake], np.zeros([batch_size, 1]))
             
+            d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+            
             #========================Train CGAN================================
             disc_model.trainable = False
             
@@ -197,6 +212,9 @@ def train_gan(X, batch_size, epoch, save_interval):
         log_msg = "%s  [CGAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
         print(log_msg)
         
+        d_loss_hist.append(np.array(d_loss[0], dtype=float))
+        gan_loss_hist.append(np.array(gan_loss[0], dtype=float))
+        
         # Save ouputs
         if save_interval>0 and (i+1)%save_interval==0:
             test_label = np.concatenate(([np.concatenate(np.full((10, 1), x)) for x in range(0, 10)]))
@@ -204,6 +222,13 @@ def train_gan(X, batch_size, epoch, save_interval):
             noise = np.random.normal(0, 1, size=(100, 256))
             test_input = np.hstack((noise, test_label))
             plot_output(input_266=test_input, step=(i+1))
+    
+    d_loss_hist = [float(x) for x in d_loss_hist]
+    gan_loss_hist = [float(x) for x in gan_loss_hist]
+    
+    return(d_loss_hist, gan_loss_hist)
 
 #===============================Train CGAN=====================================
-train_gan(X=X, batch_size=16, epoch=60000, save_interval=3000)
+d_loss_hist, gan_loss_hist = train_gan(X=X, batch_size=16, epoch=60000, save_interval=3000)
+
+plot_loss(d_loss_hist, gan_loss_hist, jump = 1)
