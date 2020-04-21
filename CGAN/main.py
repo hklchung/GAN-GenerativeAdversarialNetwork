@@ -40,7 +40,7 @@ from keras.datasets import mnist
 #=============================Load MNIST dataset===============================
 (X, Y), (_, _) = mnist.load_data()
 
-X = (X-127.5)/127.5
+X = 1.0/255*X
 X = np.array([x.reshape(28, 28, 1) for x in X])
 Y = to_categorical(Y, 10)
 
@@ -70,15 +70,11 @@ D.add(Dropout(dropout))
 D.add(Conv2D(depth*4, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
-# Forth layer
-D.add(Conv2D(depth*8, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
-D.add(LeakyReLU(alpha=0.2))
-D.add(Dropout(dropout))
 D.add(Flatten())
 # Output layer
 D.add(Dense(1, kernel_initializer='glorot_normal'))
 # KEY CHANGE: linear activation (rather than sigmoid like in DCGAN)
-D.add(Activation('linear'))
+D.add(Activation('sigmoid'))
 
 disc_out = D(concatenate1)
 
@@ -93,7 +89,7 @@ plot_model(disc_model, to_file='discriminator.png', show_shapes=True, show_layer
 # Define architecture of the generator (fraudster AI)
 # Note: with each layer, the image gets larger but with reduced depth
 dropout = 0.5
-depth = 64*4
+depth = 64*2
 dim = 7
 noise_vec = 266
 gen_model = Sequential()
@@ -116,15 +112,12 @@ gen_model.add(LeakyReLU(alpha=0.3))
 # In: 2*dim x 2*dim x depth/2
 # Out: 4*dim x 4*dim x depth/4
 gen_model.add(UpSampling2D())
-gen_model.add(Conv2DTranspose(int(depth/4), 5, padding='same', kernel_initializer='glorot_normal'))
-gen_model.add(BatchNormalization(momentum=0.8))
-gen_model.add(LeakyReLU(alpha=0.3))
 # Output layer
 # In: 4*dim x 4*dim x depth/4
 # Out: 28 x 28 x 1 RGB scale image [0.0,1.0] per pixel
 gen_model.add(Conv2DTranspose(1, 5, padding='same', kernel_initializer='glorot_normal'))
 # KEY CHANGE: tanh activation (rather than sigmoid like in DCGAN)
-gen_model.add(Activation('tanh'))
+gen_model.add(Activation('sigmoid'))
 
 # Print out architecture of the generator
 gen_model.summary()
@@ -136,8 +129,8 @@ plot_model(gen_model, to_file='generator.png', show_shapes=True, show_layer_name
 optimizer1 = RMSprop(lr=0.0008, clipvalue=1.0, decay=6e-8)
 optimizer2 = RMSprop(lr=0.0004, clipvalue=1.0, decay=3e-8)
 
-disc_model.compile(loss='mse', optimizer=optimizer1,metrics=['accuracy'])
-gen_model.compile(loss='mse', optimizer=optimizer1,metrics=['accuracy'])
+disc_model.compile(loss='binary_crossentropy', optimizer=optimizer1,metrics=['accuracy'])
+gen_model.compile(loss='binary_crossentropy', optimizer=optimizer1,metrics=['accuracy'])
 
 inputs = Input(shape = (266,))
 gen_img = gen_model(inputs)
@@ -146,7 +139,7 @@ disc_outs = disc_model([disc_class_inputs, gen_img])
 
 # Define CGAN inout and output
 comb_model = Model([inputs, disc_class_inputs], disc_outs)
-comb_model.compile(loss=['mse'], optimizer=optimizer2, metrics=['accuracy'])
+comb_model.compile(loss=['binary_crossentropy'], optimizer=optimizer2, metrics=['accuracy'])
 
 # Print out architecture of GAN
 comb_model.summary()
@@ -154,10 +147,10 @@ comb_model.summary()
 plot_model(comb_model, to_file='CGAN.png', show_shapes=True, show_layer_names=True)
 
 #==========================Plot image function=================================
-def plot_output(input_110, step):
+def plot_output(input_266, step):
     filename = "GANmodel_%d" % step
     
-    images = gen_model.predict(input_110)
+    images = gen_model.predict(input_266)
 
     plt.figure(figsize=(10,10))
     for i in range(images.shape[0]):
@@ -210,7 +203,7 @@ def train_gan(X, batch_size, epoch, save_interval):
             test_label = to_categorical(test_label)
             noise = np.random.normal(0, 1, size=(100, 256))
             test_input = np.hstack((noise, test_label))
-            plot_output(input_110=test_input, step=(i+1))
+            plot_output(input_266=test_input, step=(i+1))
 
 #===============================Train CGAN=====================================
 train_gan(X=X, batch_size=16, epoch=60000, save_interval=3000)
