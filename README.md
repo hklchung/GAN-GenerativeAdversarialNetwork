@@ -83,7 +83,7 @@ Results from DCGAN training with below listed configurations.
         <ul>
           <li>no pre-training</li>
           <li>batch_size = 32</li>
-          <li>epoch = 2000</li>
+          <li>epoch = 1</li>
           <li>noise_len = 100</li>
         </ul>
       </td>
@@ -94,7 +94,7 @@ Results from DCGAN training with below listed configurations.
         <ul>
           <li>no pre-training</li>
           <li>batch_size = 16</li>
-          <li>epoch = 5000</li>
+          <li>epoch = 1</li>
           <li>noise_len = 256</li>
         </ul>
       </td>
@@ -162,7 +162,7 @@ Results from LSGAN training with below listed configurations.
         <ul>
           <li>no pre-training</li>
           <li>batch_size = 16</li>
-          <li>epoch = 2000</li>
+          <li>epoch = 1</li>
           <li>noise_len = 256</li>
         </ul>
       </td>
@@ -227,7 +227,7 @@ Results from InfoGAN training with below listed configurations. Please note that
         <ul>
           <li>no pre-training</li>
           <li>batch_size = 16</li>
-          <li>epoch = 21000</li>
+          <li>epoch = 1</li>
           <li>noise_len = 100</li>
         </ul>
       </td>
