@@ -57,12 +57,15 @@ Hope you are now excited to start building GAN on your machine. To get started, 
 
 <!-- USAGE -->
 ## Usage
+This projects is divided into 2 parts. With the foundational level GANs, namely DCGAN and LSGAN codes, we will be running through the below listed steps.
 1. Download the <a href="https://www.kaggle.com/greg115/celebrities-100k"><strong>100k Celebrities Images Dataset</strong></a>
 2. Run resize images to scale down image size to 32 x 32 (default)
 3. Load images into session
 4. Build the GAN
 5. Train the GAN
 6. Export a result .gif file
+
+We will also explore extensions of the foundational GANs with variants such as CGAN, InfoGAN and CycleGAN where due to resource limitations, we will run with the MNIST dataset to produce results that are less demanding on the hardware.
 
 <!-- DCGAN -->
 ### DCGAN
