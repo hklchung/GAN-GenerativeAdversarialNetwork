@@ -30,8 +30,8 @@
 * [Usage](#usage)
   * [DCGAN](#dcgan)
   * [LSGAN](#lsgan)
-  * [CGAN](#cgan)
   * [InfoGAN](#infogan)
+  * [CGAN](#cgan)
 * [Contributing](#contributing)
 * [Contact](#contact)
 * [Known Issues](#known-issues)
@@ -187,16 +187,6 @@ You can also try to configure the below settings.
 </p>
 </details>
 
-<!-- CGAN -->
-### CGAN
-<details><summary>Click to expand</summary>
-<p>
-
-coming soon
-
-</p>
-</details>
-
 <!-- INFOGAN -->
 ### InfoGAN
 <details><summary>Click to expand</summary>
@@ -249,6 +239,58 @@ Below is a summary of what we have done in our InfoGAN code file <a href="https:
   * Then freeze the weights on the discriminator
   * Using the same gen_input variable and force all labels to be 1 (for "real images")
   * Train the GAN with this batch of images
+</p>
+</details>
+
+<!-- CGAN -->
+### CGAN
+<details><summary>Click to expand</summary>
+<p>
+
+CGAN or Conditional GAN is just like the InfoGAN where the generator is above to take upon a control vector to produce image of a particular desired type. This architecture was developed and described by Mirza and Osindero, 2014 in the paper <a href="https://arxiv.org/abs/1411.1784"><strong>Conditional Generative Adversarial Nets</strong></a>, where the author described CGAN as <i>"... conditional version of generative adversarial nets, which can be constructed by simply feeding the data, y, we wish to condition on to both the generator and discriminator."</i>
+
+So how do we control the output in CGAN?
+<img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/CGAN_idea.png?raw=true" height="550">
+
+The above diagram outlines the structure of the network in CGAN. We can see that CGAN is similar to InfoGAN in that it is an extention of DCGAN with new components such as the control vector y which is fed into both the generator and the discriminator.
+
+At each step of training, we would first train the discriminator to learn to separate real and fake images. Then we freeze the weights on the discriminator and train the generator to produce fake images, given a set of control variables. The same set of control variables and the images are then both feed into the discriminator which will then tell us how bad the fake images were and we update the weights in the generator to improve the quality of fake images. 
+
+Results from CGAN training with below listed configurations. Please note that each row of images denotes one configuration of the control vector.
+<table>
+  <tbody>
+    <tr>
+      <th>Results</th>
+      <th>Configuration</th>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/GANmodel_5.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 16</li>
+          <li>epoch = 5</li>
+          <li>noise_len = 256 + 10</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Below is a summary of what we have done in our CGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/main.py"><strong>main.py</strong></a>.
+1. Load MNIST dataset (default shape 28 x 28 x 1)
+2. Normalised intensities into range 0 to 1
+3. Created the discriminator and generator models
+4. Stacked the two models into CGAN
+5. Train the GAN by repeating the following
+  * Create and stack 256D noise vectors and 10D one-hot encoding vectors (representing random value between 0 and 9)
+  * Feed the stacked vectors into the generator to create n number of fake images
+  * Train the discriminator with this batch of fake images and the same 10D one-hot encoding vectors from before
+  * Randomly select n number of real images and their corresponding 10D one-hot encoding vectors
+  * Train the discriminator with this batch of real images and their 10D vectors
+  * Then freeze the weights on the discriminator
+  * Using the same noise vector, the 10D one-hot encoding vectors and force all labels to be 1 (for "real images")
+  * Train the GAN with this batch of images and 10D one-hot encoding vectors
 </p>
 </details>
 
