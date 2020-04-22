@@ -56,20 +56,20 @@ image_input = Input(shape=X.shape[1:])
 concatenate1 = Concatenate()([image_input, dense2])
 
 depth = 64
-dropout = 0.5
+dropout = 0.25
 D = Sequential()
-# Input layer
-D.add(Conv2D(depth*1, 5, strides=2, input_shape=(28,28,2),padding='same', kernel_initializer='glorot_normal'))
+D.add(Conv2D(depth, kernel_size=3, strides=2, input_shape=X.shape[1:], padding="same"))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
-# Second layer
-D.add(Conv2D(depth*2, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
+D.add(Conv2D(depth*2, kernel_size=3, strides=2, padding="same"))
+D.add(ZeroPadding2D(padding=((0,1),(0,1))))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
-# Third layer
-D.add(Conv2D(depth*4, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
+D.add(BatchNormalization(momentum=0.8))
+D.add(Conv2D(depth*4, kernel_size=3, strides=2, padding="same"))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
+D.add(BatchNormalization(momentum=0.8))
 D.add(Flatten())
 # Output layer
 D.add(Dense(1, kernel_initializer='glorot_normal'))
@@ -87,26 +87,25 @@ plot_model(disc_model, to_file='discriminator.png', show_shapes=True, show_layer
 #==========================Generator model=====================================
 # Define architecture of the generator (fraudster AI)
 # Note: with each layer, the image gets larger but with reduced depth
-dropout = 0.5
 depth = 64*2
 dim = 7
 noise_vec = 266
+
 gen_model = Sequential()
 
-gen_model.add(Dense(dim*dim*depth, input_dim=noise_vec, kernel_initializer='glorot_normal'))
-gen_model.add(BatchNormalization(momentum=0.9))
-gen_model.add(LeakyReLU(alpha=0.3))
-gen_model.add(Reshape((dim, dim, depth)))
-gen_model.add(Dropout(dropout))
-
-gen_model.add(UpSampling2D())
-gen_model.add(Conv2DTranspose(int(depth/2), 5, padding='same', kernel_initializer='glorot_normal'))
+gen_model.add(Dense(depth*dim*dim, activation="relu", input_dim=noise_vec))
+gen_model.add(Reshape((7, 7, 128)))
 gen_model.add(BatchNormalization(momentum=0.8))
-gen_model.add(LeakyReLU(alpha=0.3))
-
 gen_model.add(UpSampling2D())
-gen_model.add(Conv2DTranspose(1, 5, padding='same', kernel_initializer='glorot_normal'))
-gen_model.add(Activation('sigmoid'))
+gen_model.add(Conv2D(128, kernel_size=3, padding="same"))
+gen_model.add(Activation("relu"))
+gen_model.add(BatchNormalization(momentum=0.8))
+gen_model.add(UpSampling2D())
+gen_model.add(Conv2D(64, kernel_size=3, padding="same"))
+gen_model.add(Activation("relu"))
+gen_model.add(BatchNormalization(momentum=0.8))
+gen_model.add(Conv2D(1, kernel_size=3, padding='same'))
+gen_model.add(Activation("sigmoid"))
 
 # Print out architecture of the generator
 gen_model.summary()
@@ -219,6 +218,6 @@ def train_gan(X, batch_size, epoch, save_interval):
     return(d_loss_hist, gan_loss_hist)
 
 #===============================Train CGAN=====================================
-d_loss_hist, gan_loss_hist = train_gan(X=X, batch_size=16, epoch=60000, save_interval=3000)
+d_loss_hist, gan_loss_hist = train_gan(X=X, batch_size=16, epoch=5, save_interval=1)
 
 plot_loss(d_loss_hist, gan_loss_hist, jump = 1)

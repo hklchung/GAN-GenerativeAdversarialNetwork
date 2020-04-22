@@ -61,18 +61,22 @@ D = Sequential()
 D.add(Conv2D(depth*1, 5, strides=2, input_shape=X.shape[1:],padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
+D.add(BatchNormalization(momentum=0.9))
 # Second layer
 D.add(Conv2D(depth*2, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
+D.add(BatchNormalization(momentum=0.9))
 # Third layer
 D.add(Conv2D(depth*4, 5, strides=2, padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
+D.add(BatchNormalization(momentum=0.9))
 # Forth layer
 D.add(Conv2D(depth*8, 5, strides=1, padding='same', kernel_initializer='glorot_normal'))
 D.add(LeakyReLU(alpha=0.2))
 D.add(Dropout(dropout))
+D.add(BatchNormalization(momentum=0.9))
 D.add(Flatten())
 # Output layer
 D.add(Dense(1, kernel_initializer='glorot_normal'))
@@ -249,6 +253,7 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
             D.trainable = False
             # Train GAN on the generated data
             gan_loss = GAN.train_on_batch(noise, y)
+            
         # Print loss and accuracy values 
         log_msg = "epoch %d: [D loss: %f, acc: %f]" % (i, d_loss[0], d_loss[1])
         log_msg = "%s  [GAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
