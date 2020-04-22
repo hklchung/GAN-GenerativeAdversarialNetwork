@@ -143,6 +143,8 @@ GAN.compile(loss='mse', optimizer=optimizer2, metrics=['accuracy'])
 
 # Print out architecture of GAN
 GAN.summary()
+# Save model architecture as .PNG
+plot_model(GAN, to_file='LSGAN.png', show_shapes=True, show_layer_names=True)
 
 #==========================Plot image function=================================
 def plot_output(noise, step):
@@ -213,35 +215,40 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
     gan_performance = []
     d_accuracy = []
     gan_accuracy = []
+    
+    batch_per_epoch = int(round(X.shape[0]/batch_size))
+    
     for i in range(epoch):
-        #=====================Train discriminator==============================
-        # Randomly select n (batch_size) number of images from X
-        images_real = X[np.random.randint(0,X.shape[0], size=batch_size), :, :, :]
-        # Generate n number of 100D noise vectors
-        noise = np.random.normal(0.0, 1.0, size=[batch_size, noise_len])
-        # Produce n number of fake images with generator
-        images_fake = G.predict(noise)
-        # Concat real and fake images
-        x = np.concatenate((images_real, images_fake))
-        # Create labels
-        y = np.ones([2*batch_size, 1]) 
-        y[batch_size:, :] = 0
-        # Shuffle the real and fake images
-        x,y = shuffle(x,y)
-        # Make discriminator trainable
-        D.trainable = True
-        # Train discriminator on the sampled data
-        d_loss = D.train_on_batch(x, y)
-        
-        #=========================Train GAN====================================
-        # Create labels
-        y = np.ones([batch_size, 1])
-        # Generate n number of 100D noise vectors
-        noise = np.random.normal(0.0, 1.0, size=[batch_size, noise_len])
-        # Freeze weights in discriminator
-        D.trainable = False
-        # Train GAN on the generated data
-        gan_loss = GAN.train_on_batch(noise, y)
+        for j in tqdm(range(batch_per_epoch)):
+            #====================Train discriminator===========================
+            half_batch = int(batch_size/2)
+            # Randomly select n (batch_size) number of images from X
+            images_real = X[np.random.randint(0,X.shape[0], size=half_batch), :, :, :]
+            # Generate n number of 100D noise vectors
+            noise = np.random.normal(0.0, 1.0, size=[half_batch, noise_len])
+            # Produce n number of fake images with generator
+            images_fake = G.predict(noise)
+            # Concat real and fake images
+            x = np.concatenate((images_real, images_fake))
+            # Create labels
+            y = np.ones([batch_size, 1]) 
+            y[half_batch:, :] = 0
+            # Shuffle the real and fake images
+            x,y = shuffle(x,y)
+            # Make discriminator trainable
+            D.trainable = True
+            # Train discriminator on the sampled data
+            d_loss = D.train_on_batch(x, y)
+            
+            #========================Train GAN=================================
+            # Create labels
+            y = np.ones([batch_size, 1])
+            # Generate n number of 100D noise vectors
+            noise = np.random.normal(0.0, 1.0, size=[batch_size, noise_len])
+            # Freeze weights in discriminator
+            D.trainable = False
+            # Train GAN on the generated data
+            gan_loss = GAN.train_on_batch(noise, y)
         # Print loss and accuracy values 
         log_msg = "epoch %d: [D loss: %f, acc: %f]" % (i, d_loss[0], d_loss[1])
         log_msg = "%s  [GAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
