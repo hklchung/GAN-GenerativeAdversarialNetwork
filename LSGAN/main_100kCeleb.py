@@ -160,6 +160,8 @@ GAN.compile(loss='mse', optimizer=optimizer2, metrics=['accuracy'])
 
 # Print out architecture of GAN
 GAN.summary()
+# Save model architecture as .PNG
+plot_model(GAN, to_file='LSGAN.png', show_shapes=True, show_layer_names=True)
 
 #==========================Plot image function=================================
 def plot_output(noise, step):
@@ -237,17 +239,18 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
     for i in range(epoch):
         for j in tqdm(range(batch_per_epoch)):
             #=====================Train discriminator==========================
+            half_batch = int(batch_size/2)
             # Randomly select n (batch_size) number of images from X
-            images_real = X[np.random.randint(0,X.shape[0], size=batch_size), :, :, :]
+            images_real = X[np.random.randint(0,X.shape[0], size=half_batch), :, :, :]
             # Generate n number of 100D noise vectors
-            noise = np.random.normal(0.0, 1.0, size=[batch_size, noise_len])
+            noise = np.random.normal(0.0, 1.0, size=[half_batch, noise_len])
             # Produce n number of fake images with generator
             images_fake = G.predict(noise)
             # Concat real and fake images
             x = np.concatenate((images_real, images_fake))
             # Create labels
-            y = np.ones([2*batch_size, 1]) 
-            y[batch_size:, :] = 0
+            y = np.ones([batch_size, 1]) 
+            y[half_batch:, :] = 0
             # Shuffle the real and fake images
             x,y = shuffle(x,y)
             # Make discriminator trainable
@@ -264,10 +267,11 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
             D.trainable = False
             # Train GAN on the generated data
             gan_loss = GAN.train_on_batch(noise, y)
-            # Print loss and accuracy values 
-            log_msg = "epoch %d: [D loss: %f, acc: %f]" % (i, d_loss[0], d_loss[1])
-            log_msg = "%s  [GAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
-            print(log_msg)
+            
+        # Print loss and accuracy values 
+        log_msg = "epoch %d: [D loss: %f, acc: %f]" % (i, d_loss[0], d_loss[1])
+        log_msg = "%s  [GAN loss: %f, acc: %f]" % (log_msg, gan_loss[0], gan_loss[1])
+        print(log_msg)
             
         d_performance.append(np.array(d_loss[0], dtype=float))
         gan_performance.append(np.array(gan_loss[0], dtype=float))
