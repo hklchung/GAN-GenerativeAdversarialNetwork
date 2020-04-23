@@ -35,10 +35,11 @@ from keras.optimizers import RMSprop, Adam
 from keras.utils.vis_utils import plot_model
 from keras.utils import to_categorical
 from sklearn.utils import shuffle
-from keras.datasets import mnist
+from keras.datasets import mnist, fashion_mnist
 
 #=============================Load MNIST dataset===============================
 (X, Y), (_, _) = mnist.load_data()
+#(X, Y), (_, _) = fashion_mnist.load_data()
 
 X = 1.0/255*X
 X = np.array([x.reshape(28, 28, 1) for x in X])
