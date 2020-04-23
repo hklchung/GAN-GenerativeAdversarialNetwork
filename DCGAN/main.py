@@ -249,17 +249,18 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
     for i in range(epoch):
         for j in tqdm(range(batch_per_epoch)):
             #=====================Train discriminator==========================
+            half_batch = int(batch_size/2)
             # Randomly select n (batch_size) number of images from X
-            images_real = X[np.random.randint(0,X.shape[0], size=batch_size), :, :, :]
+            images_real = X[np.random.randint(0,X.shape[0], size=half_batch), :, :, :]
             # Generate n number of 100D noise vectors
-            noise = np.random.normal(0.0, 1.0, size=[batch_size, noise_len])
+            noise = np.random.normal(0.0, 1.0, size=[half_batch, noise_len])
             # Produce n number of fake images with generator
             images_fake = G.predict(noise)
             # Concat real and fake images
             x = np.concatenate((images_real, images_fake))
             # Create labels
-            y = np.ones([2*batch_size, 1]) 
-            y[batch_size:, :] = 0
+            y = np.ones([batch_size, 1]) 
+            y[half_batch:, :] = 0
             # Shuffle the real and fake images
             x,y = shuffle(x,y)
             # Make discriminator trainable
@@ -305,8 +306,8 @@ def train_gan(X, model, batch_size, epoch, save_interval, pretrain=False, pretra
 # --- to change noise_len, make sure to also change generator input size
 # Batch size - pick smaller batch size like 8, 16, 32, 64
 # Pre-training may hurt performance
-d_loss_ls, gan_loss_ls, d_acc_ls, gan_acc_ls = train_gan(X=X, model=GAN, batch_size=16, epoch=2000, 
-                                                         save_interval=100, pretrain=False, pretrain_num=20000,
+d_loss_ls, gan_loss_ls, d_acc_ls, gan_acc_ls = train_gan(X=X, model=GAN, batch_size=64, epoch=50, 
+                                                         save_interval=5, pretrain=False, pretrain_num=20000,
                                                          noise_len=256)
 plot_loss(d_loss_ls, gan_loss_ls)
 plot_accuracy(d_acc_ls, gan_acc_ls)
