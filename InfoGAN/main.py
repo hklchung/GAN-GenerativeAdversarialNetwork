@@ -168,6 +168,17 @@ def plot_output(input_110, step):
     plt.tight_layout()
     plt.savefig(filename)
     plt.close('all')
+
+#==========================Plot loss function==================================
+def plot_loss(d_performance, gan_performance, jump=100):
+    plt.figure(figsize=(10, 10))
+    plt.plot(d_performance[0::jump], label='discriminator')
+    plt.plot(gan_performance[0::jump], label='GAN')
+    plt.xlabel('epoch ({})'.format(jump))
+    plt.ylabel('loss')
+    plt.legend()
+    plt.savefig('loss_over_epoch.png')
+    plt.close('all')
     
 #==============================Train InfoGAN===================================
 batch_size = 16
@@ -175,32 +186,39 @@ latent_dim = 100 + 10
 epoch = 60000
 save_interval = 3000
 def train_gan(X, batch_size, epoch, save_interval):
+    batch_per_epoch = int(round(X.shape[0]/batch_size))
+    d_loss_hist = []
+    gan_loss_hist = []
     for i in range(epoch):
-        #===============Train discriminator and auxiliary models===============
-        disc_model.trainable = True
-        
-        images_index = np.random.randint(0, X.shape[0], size = (batch_size))
-        images_real = X[images_index]
-        images_label = Y[images_index]
-        
-        random_label = to_categorical(np.random.randint(0,10,batch_size), 10)
-        noise = np.random.normal(0, 1, size=(batch_size, 100))
-        images_fake = gen_model.predict(np.hstack((noise, random_label)))
-        
-        d_loss_real = disc_model.train_on_batch(images_real, np.ones([batch_size, 1]))
-        d_loss_fake = disc_model.train_on_batch(images_fake, np.zeros([batch_size, 1]))
-        
-        d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
-        
-        #==========================Train InfoGAN===============================
-        disc_model.trainable = False
-        
-        gen_input = np.concatenate((noise, random_label), axis=1)
-        gan_loss = comb_model.train_on_batch(gen_input, [np.ones([batch_size, 1]), random_label])
+        for j in tqdm(range(batch_per_epoch)):
+            #=============Train discriminator and auxiliary models=============
+            disc_model.trainable = True
+            
+            images_index = np.random.randint(0, X.shape[0], size = (batch_size))
+            images_real = X[images_index]
+            images_label = Y[images_index]
+            
+            random_label = to_categorical(np.random.randint(0,10,batch_size), 10)
+            noise = np.random.normal(0, 1, size=(batch_size, 100))
+            images_fake = gen_model.predict(np.hstack((noise, random_label)))
+            
+            d_loss_real = disc_model.train_on_batch(images_real, np.ones([batch_size, 1]))
+            d_loss_fake = disc_model.train_on_batch(images_fake, np.zeros([batch_size, 1]))
+            
+            d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+            
+            #========================Train InfoGAN=============================
+            disc_model.trainable = False
+            
+            gen_input = np.concatenate((noise, random_label), axis=1)
+            gan_loss = comb_model.train_on_batch(gen_input, [np.ones([batch_size, 1]), random_label])
         
         log_msg = "epoch %d: [D loss (real): %f, acc: %f]" % (i, d_loss_real[0], d_loss_real[1])
         log_msg = "%s  [D loss (fake): %f, acc: %f]" % (log_msg, d_loss_fake[0], d_loss_fake[1])
         print(log_msg)
+        
+        d_loss_hist.append(np.array(d_loss[0], dtype=float))
+        gan_loss_hist.append(np.array(gan_loss[0], dtype=float))
         
         # Save ouputs
         if save_interval>0 and (i+1)%save_interval==0:
@@ -210,5 +228,12 @@ def train_gan(X, batch_size, epoch, save_interval):
             test_input = np.hstack((noise, test_label))
             plot_output(input_110=test_input, step=(i+1))
             
+    d_loss_hist = [float(x) for x in d_loss_hist]
+    gan_loss_hist = [float(x) for x in gan_loss_hist]
+    
+    return(d_loss_hist, gan_loss_hist)
+            
 #===============================Train InfoGAN==================================
-train_gan(X=X, batch_size=16, epoch=60000, save_interval=3000)
+d_loss_hist, gan_loss_hist = train_gan(X=X, batch_size=16, epoch=5, save_interval=1)
+
+plot_loss(d_loss_hist, gan_loss_hist, jump = 1)
