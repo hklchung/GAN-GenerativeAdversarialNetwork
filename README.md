@@ -267,7 +267,18 @@ Results from CGAN training with below listed configurations. Please note that ea
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/GANmodel_5.png?raw=true" height="250"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/MNIST/GANmodel_5.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 16</li>
+          <li>epoch = 5</li>
+          <li>noise_len = 256 + 10</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/Fashion_MNIST/GANmodel_5.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>no pre-training</li>
