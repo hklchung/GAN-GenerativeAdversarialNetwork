@@ -151,6 +151,7 @@ comb_model.compile(loss=['binary_crossentropy', 'categorical_crossentropy'], opt
 comb_model.summary()
 # Save model architecture as .PNG 
 plot_model(comb_model, to_file='InfoGAN.png', show_shapes=True, show_layer_names=True)
+plot_model(comb_model, to_file='InfoGAN_expand.png', expand_nested=True, show_shapes=True, show_layer_names=True)
 
 #==========================Plot image function=================================
 def plot_output(input_110, step):
