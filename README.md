@@ -102,6 +102,17 @@ Results from DCGAN training with below listed configurations.
         </ul>
       </td>
     </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model10/GANmodel_40.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 128</li>
+          <li>epoch = 40</li>
+          <li>noise_len = 256</li>
+        </ul>
+      </td>
+    </tr>
   </tbody>
 </table>
 
