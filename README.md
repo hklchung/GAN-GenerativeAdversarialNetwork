@@ -226,13 +226,13 @@ Results from InfoGAN training with below listed configurations. Please note that
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/Result/GANmodel_21000.png?raw=true" height="250"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/Result/Model2/GANmodel_10.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>no pre-training</li>
-          <li>batch_size = 16</li>
-          <li>epoch = 1</li>
-          <li>noise_len = 100</li>
+          <li>batch_size = 32</li>
+          <li>epoch = 10</li>
+          <li>noise_len = 256 + 10</li>
         </ul>
       </td>
     </tr>
