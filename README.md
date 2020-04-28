@@ -81,35 +81,13 @@ Results from DCGAN training with below listed configurations.
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model7/GANmodel_1700.png?raw=true" height="250"></td>
-      <td width="50%">
-        <ul>
-          <li>no pre-training</li>
-          <li>batch_size = 32</li>
-          <li>epoch = 1</li>
-          <li>noise_len = 100</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model9/GANmodel_2500.png?raw=true" height="250"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model11/GANmodel_49.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>no pre-training</li>
           <li>batch_size = 16</li>
-          <li>epoch = 1</li>
-          <li>noise_len = 256</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model10/GANmodel_40.png?raw=true" height="250"></td>
-      <td width="50%">
-        <ul>
-          <li>no pre-training</li>
-          <li>batch_size = 128</li>
-          <li>epoch = 40</li>
-          <li>noise_len = 256</li>
+          <li>epoch = 50</li>
+          <li>noise_len = 32</li>
         </ul>
       </td>
     </tr>
