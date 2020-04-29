@@ -59,7 +59,7 @@ Hope you are now excited to start building GAN on your machine. To get started, 
 ## Usage
 This projects is divided into 2 parts. With the foundational level GANs, namely DCGAN and LSGAN codes, we will be running through the below listed steps.
 1. Download the <a href="https://www.kaggle.com/greg115/celebrities-100k"><strong>100k Celebrities Images Dataset</strong></a>
-2. Run resize images to scale down image size to 32 x 32 (default)
+2. Run resize images to scale down image size to [32 x 32] (default) or [64 x 64]
 3. Load images into session
 4. Build the GAN
 5. Train the GAN
@@ -95,35 +95,35 @@ Results from DCGAN training with below listed configurations.
 </table>
 
 Below is a summary of what we have done in our DCGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/main.py"><strong>main.py</strong></a>.
-1. Resized celebrity images to 32x32x3
+1. Resized celebrity images to 64x64x3
 2. Load images into session and normalised RGB intensities
 3. Created the discriminator and generator models
 4. Stacked the two models into GAN
 5. Train the GAN by repeating the following
-  * (Optional) First pre-train our discriminator to understand what it is looking for
-  * Create 100D noise vectors and feed into the generator to create n number of fake images
-  * Randomly select n number of real images and concatenate with the fake images from generator
+  * ~~(Optional) First pre-train our discriminator to understand what it is looking for~~ (removed in 29/04/2020 update)
+  * Create 32D noise vectors and feed into the generator to create n number of fake images
+  * Select n number of real images and concatenate with the fake images from generator
   * Train the discriminator with this batch of images
-  * Then freeze the weights on the discriminator
-  * Create a new set of 100D noise vectors and again feed into the generator to create n number of fake images
-  * Force all labels to be 1 (for "real images")
+  * ~~Then freeze the weights on the discriminator~~ (removed in 29/04/2020 update)
+  * Create a new set of 32D noise vectors and again feed into the generator to create n number of fake images
+  * Force all labels to be 0 (for "fake images")
   * Train the GAN with this batch of images
 
 Training DCGAN successfully is difficult as we are trying to train two models that compete with each other at the same time, and optimisation can oscillate between solutions so much that the generator can collapse. Below are some tips on how to train a DCGAN succesfully.
-1. Increase length of input noise vectors - Start with 100 and try 128 and 256
+1. Increase length of input noise vectors - Start with 32 and try 128 and 256
 2. Decrease batch size - Start with 64 and try 32, 16 and 8. Smaller batch size generally leads to rapid learning but a volatile learning process with higher variance in the classification accuracy. Whereas larger batch sizes slow down the learning process but the final stages result in a convergence to a more stable model exemplified by lower variance in classification accuracy.
-3. No pre-training of discriminator
+3. Add pre-training of discriminator
 4. Training longer does not necessarily lead to better results - So don't set the epoch parameter too high
 5. The discriminator model needs to be really good at distinguishing the fake from real images but it cannot overpower the generator, therefore both of these models should be as good as possible through maximising the depth of the network that can be supported by your machine
 
 You can also try to configure the below settings.
 1. GAN network architecture
 2. Values of dropout, LeakyReLU alpha, BatchNormalization momentum
-3. Change activation of generator to 'tanh'
+3. Change activation of generator to 'sigmoid'
 4. Change optimiser from RMSProp to Adam
-5. Change optimisation metric from 'binary_crossentropy' to Wasserstein loss function
+5. Change optimisation metric
 6. Try various kinds of noise sampling, e.g. uniform sampling
-7. Soft labelling
+7. Hard labelling
 8. Separate batches of real and fake images when training discriminator
 
 One of the key limitations of DCGAN is that it occupies a lot of memory during training and typically only works well with small, thumbnail sized images.
