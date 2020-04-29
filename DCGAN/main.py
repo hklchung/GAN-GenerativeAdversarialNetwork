@@ -175,14 +175,14 @@ plot_model(GAN, to_file='DCGAN_expand.png', expand_nested=True, show_shapes=True
 def plot_output(noise, step):
     filename = "GANmodel_%d.png" % step
     
-    images = generator.predict(noise)
+    images = G.predict(noise)
 
     plt.figure(figsize=(10,10))
     for i in range(images.shape[0]):
         plt.subplot(4, 4, i+1)
         image = images[i, :, :, :]
-        image = image.reshape(images.shape[1], images.shape[2], images.shape[3])
-        plt.imshow(image)
+        image = image.reshape(images.shape[1], images.shape[2])
+        plt.imshow(image, cmap='gray')
         plt.axis('off')
     plt.tight_layout()
     plt.savefig(filename)
@@ -220,7 +220,7 @@ def train_gan(X, model, batch_size, epoch, save_interval, noise_len=32):
             y += .05 * np.random.random(y.shape)
 
             d_loss = D.train_on_batch(x, y)
-            d_losses.append(d_loss)
+            d_losses.append(d_loss[0])
             
             #=========================Train GAN================================
             noise_vec = np.random.normal(size=(batch_size, noise))
@@ -233,7 +233,7 @@ def train_gan(X, model, batch_size, epoch, save_interval, noise_len=32):
             if start > X.shape[0] - batch_size:
                 start = 0
         # Print loss and accuracy values 
-        log_msg = "epoch %d: [D loss: %f]" % (i, d_loss)
+        log_msg = "epoch %d: [D loss: %f]" % (i, d_loss[0])
         log_msg = "%s  [GAN loss: %f]" % (log_msg, gan_loss)
         print(log_msg)
         
