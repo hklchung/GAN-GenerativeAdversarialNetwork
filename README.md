@@ -13,7 +13,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork">
-    <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/DCGAN.gif?raw=true" height="150">
+    <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/DCGAN.gif?raw=true" height="400">
   </a>
 
   <h3 align="center">Generative Adversarial Network</h3>
