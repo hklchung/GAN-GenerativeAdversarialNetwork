@@ -13,7 +13,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork">
-    <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model11/DCGAN.gif?raw=true" height="150">
+    <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/DCGAN.gif?raw=true" height="150">
   </a>
 
   <h3 align="center">Generative Adversarial Network</h3>
@@ -81,7 +81,7 @@ Results from DCGAN training with below listed configurations.
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Model11/GANmodel_49.png?raw=true" height="250"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/GANmodel_49.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>no pre-training</li>
