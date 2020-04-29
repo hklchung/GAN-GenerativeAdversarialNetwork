@@ -182,7 +182,7 @@ def plot_output(noise, step):
         plt.subplot(4, 4, i+1)
         image = images[i, :, :, :]
         image = image.reshape(images.shape[1], images.shape[2])
-        plt.imshow(image, cmap='gray')
+        plt.imshow(image)
         plt.axis('off')
     plt.tight_layout()
     plt.savefig(filename)
