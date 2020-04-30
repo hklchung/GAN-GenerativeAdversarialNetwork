@@ -258,7 +258,7 @@ plot_loss(d_loss_ls, gan_loss_ls)
 model_json = GAN.to_json()
 with open("GAN_model.json", "w") as json_file:
     json_file.write(model_json)
-GAN.save_weights("GAN_model.h5")
+GAN.save_weights("GAN_model.h5", overwrite=True)
 
 #================================Result GIF====================================
 import imageio
