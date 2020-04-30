@@ -127,6 +127,11 @@ You can also try to configure the below settings.
 8. Separate batches of real and fake images when training discriminator
 
 One of the key limitations of DCGAN is that it occupies a lot of memory during training and typically only works well with small, thumbnail sized images.
+
+##### Bonus section
+I also tried to manually change each of the 32 values in the input vector independently to observe the impact on the generated images. This can be considered as a somewhat conditional image generation process through the manipulation of the input vector. However, as we can see from the below result it is not clear what exactly these values actually code for.
+
+<img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/controlled_shifts.png?raw=true" height="10000">
 </p>
 </details>
 
