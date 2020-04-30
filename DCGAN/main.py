@@ -268,3 +268,21 @@ images = []
 for filename in tqdm(os.listdir(result_pwd)):
     images.append(imageio.imread(result_pwd + '/' + filename))
 imageio.mimsave(output_pwd + '/' + result_pwd + '/' + 'GAN.gif', images)
+
+#=======================Manipulating input vector==============================
+features = 32
+preset = [-2, -1, -.5, -.2, -.1, 0, .1, .2, .5, 1, 2]
+
+plt.figure(1, figsize=(2 * len(preset), features * 2))
+i = 0
+for feature in range(features):
+    for value in preset:
+        plt.subplot(features, len(preset), i+1)
+        latent_vector = np.zeros((1, 32))
+        latent_vector[0, feature] = value
+        img = generator.predict(latent_vector)[0]
+        plt.imshow(img)
+        plt.savefig('controlled_shifts.png')
+        plt.axis('off')
+        i += 1
+plt.show()
