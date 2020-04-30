@@ -156,6 +156,7 @@ plot_model(G, to_file='generator.png', show_shapes=True, show_layer_names=True)
 # Define optimisers
 optimizer = RMSprop(lr=.0001, clipvalue=1.0, decay=1e-8)
 D.compile(loss='binary_crossentropy', optimizer=optimizer,metrics=['accuracy'])
+D.trainable = False
 
 # Define architecture of GAN
 GAN = Sequential()
@@ -181,7 +182,7 @@ def plot_output(noise, step):
     for i in range(images.shape[0]):
         plt.subplot(4, 4, i+1)
         image = images[i, :, :, :]
-        image = image.reshape(images.shape[1], images.shape[2])
+        image = image.reshape(images.shape[1], images.shape[2], images.shape[3])
         plt.imshow(image)
         plt.axis('off')
     plt.tight_layout()
