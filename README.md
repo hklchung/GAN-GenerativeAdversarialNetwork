@@ -131,7 +131,7 @@ One of the key limitations of DCGAN is that it occupies a lot of memory during t
 ##### Bonus section
 I also tried to manually change each of the 32 values in the input vector independently to observe the impact on the generated images. This can be considered as a somewhat conditional image generation process through the manipulation of the input vector. However, as we can see from the below result it is not clear what exactly these values actually code for.
 <p align="center">
-  <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/controlled_shifts_output.png?raw=true" height="10000">
+  <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/controlled_shifts.png?raw=true" height="10000">
 </p>
 </p>
 </details>
