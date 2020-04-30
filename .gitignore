@@ -11,5 +11,7 @@ CycleGAN/Image/monet2photo.zip
 CycleGAN/monet2photo_256.npz
 **/Experiment/**
 **/wip.py
+*.h5
+*.ipynb
 Image/
 **/Old/**
