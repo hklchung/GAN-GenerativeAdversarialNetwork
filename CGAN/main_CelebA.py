@@ -223,7 +223,8 @@ def train_gan(X, batch_size, epoch, save_interval):
             images_real = X[start:start + batch_size]
             images_label = Y[start:start + batch_size]
             
-            random_label = np.array([np.array([random_flip() for i in range(5)]) for i in range(batch_size)])
+            random_index = np.random.randint(0, Y.shape[0], size = (batch_size))
+            random_label = Y[random_index]
             noise = np.random.normal(0, 1, size=(batch_size, 32))
             images_fake = gen_model.predict(np.hstack((noise, random_label)))
             
@@ -236,14 +237,15 @@ def train_gan(X, batch_size, epoch, save_interval):
             d_losses.append(d_loss[0])
             
             #========================Train CGAN================================
-            random_label = np.array([np.array([random_flip() for i in range(5)]) for i in range(batch_size)])
+            random_index = np.random.randint(0, Y.shape[0], size = (batch_size))
+            random_label = Y[random_index]
             noise = np.random.normal(0, 1, size=(batch_size, 32))
             gen_input = np.concatenate((noise, random_label), axis=1)
             y = np.ones((batch_size, 1))
             
             gan_loss = GAN.train_on_batch([gen_input, random_label], y)
             gan_losses.append(gan_loss)
-            
+
             start += batch_size
             if start > X.shape[0] - batch_size:
                 start = 0
@@ -257,10 +259,13 @@ def train_gan(X, batch_size, epoch, save_interval):
         
         # Save ouputs
         if save_interval>0 and (i+1)%save_interval==0:
-            fixed = np.array([random_flip() for i in range(5)])
-            test_label = np.stack([fixed for _ in range(16)], axis=0)
+            blonde_women = np.array([np.array([0, 1, 0, 0, 0]) for i in range(4)])
+            darkhair_men = np.array([np.array([1, 0, 0, 1, 0]) for i in range(4)])
+            darkhair_women_glasses = np.array([np.array([1, 0, 1, 0, 1]) for i in range(4)])
+            blonde_men_glasses_smiling = np.array([np.array([0, 1, 1, 1, 1]) for i in range(4)])
+            labels = np.concatenate([blonde_women, darkhair_men, darkhair_women_glasses, blonde_men_glasses_smiling])
             noise = np.random.normal(0, 1, size=(16, 32))
-            test_input = np.hstack((noise, test_label))
+            test_input = np.concatenate((noise, labels), axis=1)
             plot_output(input_37=test_input, step=(i+1))
     
     d_losses = [float(x) for x in d_losses]
@@ -272,3 +277,13 @@ def train_gan(X, batch_size, epoch, save_interval):
 d_loss_hist, gan_loss_hist = train_gan(X=X, batch_size=16, epoch=20, save_interval=1)
 
 plot_loss(d_loss_ls, gan_loss_ls, 1)
+
+#================================Save model====================================
+model_json = GAN.to_json()
+with open("GAN_model.json", "w") as json_file:
+    json_file.write(model_json)
+GAN.save_weights("GAN_model.h5", overwrite=True)
+
+GAN.save('CGAN_full_model.h5')
+gen_model.save('CGAN_generator.h5')
+disc_model.save('CGAN_discriminator.h5')

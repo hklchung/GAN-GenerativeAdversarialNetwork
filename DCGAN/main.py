@@ -261,6 +261,8 @@ with open("GAN_model.json", "w") as json_file:
 GAN.save_weights("GAN_model.h5", overwrite=True)
 
 GAN.save('DCGAN_full_model.h5')
+D.save('DCGAN_discriminator.h5')
+G.save('DCGAN_generator.h5')
 
 #================================Result GIF====================================
 import imageio
