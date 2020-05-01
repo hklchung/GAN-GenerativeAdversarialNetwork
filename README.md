@@ -298,10 +298,22 @@ Results from CGAN training with below listed configurations. Please note that ea
         </ul>
       </td>
     </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/Celebs/GANmodel_50.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 16</li>
+          <li>epoch = 50</li>
+          <li>noise_len = 32 + 5</li>
+        </ul>
+      </td>
+    </tr>
   </tbody>
 </table>
 
-Below is a summary of what we have done in our CGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/main.py"><strong>main.py</strong></a>.
+Below is a summary of what we have done in our CGAN code in 2 parts.
+##### Part One - MNIST & Fashion MNIST <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/main_MNIST.py"><strong>main.py</strong></a>.
 1. Load MNIST dataset (default shape 28 x 28 x 1)
 2. Normalised intensities into range 0 to 1
 3. Created the discriminator and generator models
@@ -315,6 +327,23 @@ Below is a summary of what we have done in our CGAN code file <a href="https://g
   * Then freeze the weights on the discriminator
   * Using the same noise vector, the 10D one-hot encoding vectors and force all labels to be 1 (for "real images")
   * Train the GAN with this batch of images and 10D one-hot encoding vectors
+
+##### Part Two - CelebA <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/main_CelebA.py"><strong>main.py</strong></a>.
+1. Load CelebA dataset (resized to shape 64 x 64 x 3)
+2. Normalised intensities into range 0 to 1
+3. Created the discriminator and generator models
+4. Stacked the two models into CGAN
+5. Train the GAN by repeating the following
+  * Create and stack 32D noise vectors and 5D one-hot encoding vectors, representing the features black hair, blonde hair, eyeglasses, male and smiling (e.g. a smiling dark-haired man without glasses will have a vector representation of [1, 0, 0, 1, 1])
+  * Feed the stacked vectors into the generator to create n number of fake images
+  * Train the discriminator with this batch of fake images and the same 5D one-hot encoding vectors from before
+  * Randomly select n number of real images and their corresponding 5D one-hot encoding vectors
+  * Train the discriminator with this batch of real images and their 5D vectors
+  * Using the same noise vector, the 5D one-hot encoding vectors and force all labels to be 1 (for "real images")
+  * Train the GAN with this batch of images and 5D one-hot encoding vectors
+  
+Let's take a closer look at the generated results.
+
 </p>
 </details>
 
