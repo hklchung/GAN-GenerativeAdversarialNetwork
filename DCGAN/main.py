@@ -132,16 +132,16 @@ G.add(LeakyReLU())
 # Third layer
 G.add(Conv2DTranspose(depth*2, 4, strides=2, padding = 'same'))
 G.add(LeakyReLU())
-# Third layer
+# Forth layer
 G.add(Conv2DTranspose(depth*2, 4, strides=2, padding = 'same'))
 G.add(LeakyReLU())
-# Third layer
+# Fifth layer
 G.add(Conv2DTranspose(depth*2, 4, strides=2, padding = 'same'))
 G.add(LeakyReLU())
-# Third layer
+# Sixth layer
 G.add(Conv2DTranspose(depth*4, 5, strides=1, padding = 'same'))
 G.add(LeakyReLU())
-# Third layer
+# Seventh layer
 G.add(Conv2DTranspose(depth*4, 5, strides=1, padding = 'same'))
 G.add(LeakyReLU())
 # Output
@@ -158,7 +158,7 @@ optimizer = RMSprop(lr=.0001, clipvalue=1.0, decay=1e-8)
 D.compile(loss='binary_crossentropy', optimizer=optimizer,metrics=['accuracy'])
 D.trainable = False
 
-# Define architecture of GAN
+# Define architecture of DCGAN
 GAN = Sequential()
 GAN.add(G)  # Adding the generator
 GAN.add(D)  # Adding the discriminator 
@@ -166,7 +166,7 @@ GAN.add(D)  # Adding the discriminator
 # Compile DCGAN
 GAN.compile(loss='binary_crossentropy', optimizer=optimizer)
 
-# Print out architecture of GAN
+# Print out architecture of DCGAN
 GAN.summary()
 # Save model architecture as .PNG
 plot_model(GAN, to_file='DCGAN.png', show_shapes=True, show_layer_names=True)
@@ -259,6 +259,8 @@ model_json = GAN.to_json()
 with open("GAN_model.json", "w") as json_file:
     json_file.write(model_json)
 GAN.save_weights("GAN_model.h5", overwrite=True)
+
+GAN.save('DCGAN_full_model.h5')
 
 #================================Result GIF====================================
 import imageio
