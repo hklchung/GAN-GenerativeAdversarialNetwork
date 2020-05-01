@@ -243,6 +243,10 @@ def train_gan(X, batch_size, epoch, save_interval):
             
             gan_loss = GAN.train_on_batch([gen_input, random_label], y)
             gan_losses.append(gan_loss)
+            
+            start += batch_size
+            if start > X.shape[0] - batch_size:
+                start = 0
         
         log_msg = "epoch %d: [D loss: %f, acc: %f]" % (i, d_loss[0], d_loss[1])
         log_msg = "%s  [CGAN loss: %f]" % (log_msg, gan_loss)
