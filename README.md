@@ -344,6 +344,15 @@ Below is a summary of what we have done in our CGAN code in 2 parts.
   
 Let's take a closer look at the generated results.
 
+As we can observe below, the model has successfully learnt the embedding of the features in the input vector which in turn has enabled us to generate images with desired features at will. In this model, we learnt from five features in the CelebA dataset, these are black hair, blonde hair, eyeglasses, man and smiling. 
+
+An interesting note here is that during development, the original code for training the generator employed the usual method of randomly sample both the noise and the input vector (see MNIST training) which resulted in the trained generator producing poorly located and coloured pixels. The reason for this in part is due to the fact that it is not possible to have both black and blonde hair (or at least very unlikely). This means the CGAN model could not really learn anything meaningful from some randomly sampled vectors. As a result, the code was later modified to randomly sample from the CelebA dataset instead which led to an increase in performance of the generator.
+
+<p align="center">
+  <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/Celebs/Controlled_generation_explained.png?raw=true" height="700">
+</p>
+
+
 </p>
 </details>
 
