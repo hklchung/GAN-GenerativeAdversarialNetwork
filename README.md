@@ -57,7 +57,7 @@ Hope you are now excited to start building GAN on your machine. To get started, 
 
 <!-- USAGE -->
 ## Usage
-This projects is divided into 2 parts. With the foundational level GANs, namely DCGAN and LSGAN codes, we will be running through the below listed steps.
+This projects is divided into 2 parts. With the foundational level GANs, namely DCGAN and LSGAN codes, I will be running through the below listed steps.
 1. Download the <a href="https://www.kaggle.com/greg115/celebrities-100k"><strong>100k Celebrities Images Dataset</strong></a>
 2. Run resize images to scale down image size to [32 x 32] (default) or [64 x 64]
 3. Load images into session
@@ -65,7 +65,7 @@ This projects is divided into 2 parts. With the foundational level GANs, namely 
 5. Train the GAN
 6. Export a result .gif file
 
-We will also explore extensions of the foundational GANs with variants such as CGAN, InfoGAN and CycleGAN where due to resource limitations, we will run with the MNIST dataset to produce results that are less demanding on the hardware.
+I will also explore extensions of the foundational GANs with variants such as CGAN, InfoGAN and CycleGAN where due to resource limitations, I will run with the MNIST dataset to produce results that are less demanding on the hardware.
 
 <!-- DCGAN -->
 ### DCGAN
@@ -96,7 +96,7 @@ Results from DCGAN training with below listed configurations.
   </tbody>
 </table>
 
-Below is a summary of what we have done in our DCGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/main.py"><strong>main.py</strong></a>.
+Below is a summary of what I have done in the DCGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/main.py"><strong>main.py</strong></a>.
 1. Resized celebrity images to 64x64x3
 2. Load images into session and normalised RGB intensities
 3. Created the discriminator and generator models
@@ -173,7 +173,7 @@ Results from LSGAN training with below listed configurations.
 </table>
 
 ##### LSGAN vs DCGAN
-As stated above, the authors of the LSGAN paper claimed that LSGAN is <i>"...able to generate higher quality images than regular GANs ... LSGANs perform more stable during the learning process."</i> Therefore we decided to compare the loss over time during training and the image quality at epoch 30 (LSGAN was only trained for 30 epochs) and I think based on the results below, it is fair to say that the statements hold true.
+As stated above, the authors of the LSGAN paper claimed that LSGAN is <i>"...able to generate higher quality images than regular GANs ... LSGANs perform more stable during the learning process."</i> Therefore I decided to compare the loss over time during training and the image quality at epoch 30 (LSGAN was only trained for 30 epochs) and I think based on the results below, it is fair to say that the statements hold true.
 
 <i>Please note that the loss over time plots are not at the same scale!</i>
 
@@ -201,7 +201,7 @@ As stated above, the authors of the LSGAN paper claimed that LSGAN is <i>"...abl
   </tbody>
 </table>
 
-Below is a summary of what we have done in our LSGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/main_100kCeleb.py"><strong>main.py</strong></a>.
+Below is a summary of what I have done in our LSGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/main_100kCeleb.py"><strong>main.py</strong></a>.
 1. Resized celebrity images to 64x64x3
 2. Load images into session and normalised RGB intensities
 3. Created the discriminator and generator models
@@ -274,7 +274,7 @@ Results from InfoGAN training with below listed configurations. Please note that
   </tbody>
 </table>
 
-Below is a summary of what we have done in our InfoGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/main.py"><strong>main.py</strong></a>.
+Below is a summary of what I have done in our InfoGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/main.py"><strong>main.py</strong></a>.
 1. Load MNIST dataset (default shape 28 x 28 x 1)
 2. Normalised intensities into range 0 to 1
 3. Created the discriminator, auxiliary and generator models
@@ -350,7 +350,7 @@ Results from CGAN training with below listed configurations. Please note that ea
   </tbody>
 </table>
 
-Below is a summary of what we have done in our CGAN code in 2 parts.
+Below is a summary of what I have done in our CGAN code in 2 parts.
 ##### Part One - MNIST & Fashion MNIST <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/main_MNIST.py"><strong>main.py</strong></a>.
 1. Load MNIST dataset (default shape 28 x 28 x 1)
 2. Normalised intensities into range 0 to 1
