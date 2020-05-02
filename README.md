@@ -73,6 +73,8 @@ We will also explore extensions of the foundational GANs with variants such as C
 <p>
 DCGAN is also known as Deep Convolutional Generative Adversarial Network, where two models are trained simultaneously by an adversarial process. A generator learns to create images that look real, while a discriminator learns to tell the real and fake images apart. During training, the generator progressively becomes better at creating images that look real, while the discriminator becomes better at telling them apart. The process reaches equilibrium when the discriminator can no longer distinguish real images from fakes, i.e. accuracy maintains at 50%.
 
+Aim: Our goal here is to demonstrate ability to generate realistic looking human faces with DCGAN.
+
 Results from DCGAN training with below listed configurations.
 <table>
   <tbody>
@@ -147,6 +149,8 @@ LSGAN is heuristically identical with DCGAN with below changes in code:
 * 'tanh' for activation in the generator
 * 'mse' for loss metric rather than binary corssentropy  
 
+Aim: Our goal here is to demonstrate that LSGAN can generate higher quality images than DCGAN and performs more stabily during the training process.
+
 Results from LSGAN training with below listed configurations.
 <table>
   <tbody>
@@ -168,6 +172,35 @@ Results from LSGAN training with below listed configurations.
   </tbody>
 </table>
 
+##### LSGAN vs DCGAN
+As stated above, the authors of the LSGAN paper claimed that LSGAN is <i>"...able to generate higher quality images than regular GANs ... LSGANs perform more stable during the learning process."</i> Therefore we decided to compare the loss over time during training and the image quality at epoch 30 (LSGAN was only trained for 30 epochs) and I think based on the results below, it is fair to say that the statements hold true.
+
+<i>Please note that the loss over time plots are not at the same scale!</i>
+
+<table>
+  <tbody>
+    <tr>
+      <th></th>
+      <th>LSGAN</th>
+      <th>DCGAN</th>
+    </tr>
+    <tr>
+      <td>Image quality at Epoch 30</td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/Result/100kCelebs/GANmodel_30.png?raw=true" height="350"></td>
+      </td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/GANmodel_30.png?raw=true" height="350"></td>
+      </td>
+    </tr>
+    <tr>
+  <td>Loss over Time</td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/Result/100kCelebs/loss_over_epoch.png?raw=true" height="400"></td>
+      </td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/DCGAN/Result/Celebs/loss_over_epoch.png?raw=true" height="400"></td>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 Below is a summary of what we have done in our LSGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/main_100kCeleb.py"><strong>main.py</strong></a>.
 1. Resized celebrity images to 64x64x3
 2. Load images into session and normalised RGB intensities
@@ -182,6 +215,7 @@ You can also try to configure the below settings.
 4. Try various kinds of noise sampling, e.g. uniform sampling
 5. Soft labelling
 6. Separate batches of real and fake images when training discriminator
+
 </p>
 </details>
 
@@ -200,7 +234,9 @@ The above diagram outlines the structure of the network in InfoGAN. We can see t
 * A discriminator model that validates the input images
 * An auxiliary model that predicts the control variables
 
-At each step of training, we would first train the discriminator to learn to separate real and fake images. Then we freeze the weights on the discriminator and train the generator to produce fake images, given a set of control variables. The discriminator will then tell us how bad the fake images were and we update the weights in the generator to improve the quality of fake images. 
+At each step of training, we would first train the discriminator to learn to separate real and fake images. Then we freeze the weights on the discriminator and train the generator to produce fake images, given a set of control variables. The discriminator will then tell us how bad the fake images were and we update the weights in the generator to improve the quality of fake images.
+
+Aim: Our goal here is to demonstrate ability to control generated outputs through the InfoGAN architecture. 
 
 Results from InfoGAN training with below listed configurations. Please note that each row of images denotes one configuration of the control vector.
 <table>
@@ -268,6 +304,8 @@ So how do we control the output in CGAN?
 The above diagram outlines the structure of the network in CGAN. We can see that CGAN is similar to InfoGAN in that it is an extention of DCGAN with new components such as the control vector y which is fed into both the generator and the discriminator.
 
 At each step of training, we would first train the discriminator to learn to separate real and fake images. Then we freeze the weights on the discriminator and train the generator to produce fake images, given a set of control variables. The same set of control variables and the images are then both feed into the discriminator which will then tell us how bad the fake images were and we update the weights in the generator to improve the quality of fake images. 
+
+Aim: Our goal here is to demonstrate ability to control generated outputs through the CGAN architecture. 
 
 Results from CGAN training with below listed configurations. Please note that each row of images denotes one configuration of the control vector.
 <table>
