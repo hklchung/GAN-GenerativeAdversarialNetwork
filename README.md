@@ -155,13 +155,13 @@ Results from LSGAN training with below listed configurations.
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/Result/100kCelebs/GANmodel_1900.png?raw=true" height="250"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/Result/100kCelebs/GANmodel_30.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>no pre-training</li>
           <li>batch_size = 16</li>
-          <li>epoch = 1</li>
-          <li>noise_len = 256</li>
+          <li>epoch = 30</li>
+          <li>noise_len = 32</li>
         </ul>
       </td>
     </tr>
@@ -169,11 +169,11 @@ Results from LSGAN training with below listed configurations.
 </table>
 
 Below is a summary of what we have done in our LSGAN code file <a href="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/LSGAN/main_100kCeleb.py"><strong>main.py</strong></a>.
-1. Resized celebrity images to 32x32x3
-2. Load images into session and normalised RGB intensities into range -1 to 1
+1. Resized celebrity images to 64x64x3
+2. Load images into session and normalised RGB intensities
 3. Created the discriminator and generator models
-4. Stacked the two models into GAN
-5. Train the GAN (process as per DCGAN, see above)
+4. Stacked the two models into LSGAN
+5. Train the LSGAN (process as per DCGAN, see above)
 
 You can also try to configure the below settings.
 1. GAN network architecture
