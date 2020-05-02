@@ -299,7 +299,7 @@ Below is a summary of what I have done in our InfoGAN code file <a href="https:/
 CGAN or Conditional GAN is just like the InfoGAN where the generator is above to take upon a control vector to produce image of a particular desired type. This architecture was developed and described by Mirza and Osindero, 2014 in the paper <a href="https://arxiv.org/abs/1411.1784"><strong>Conditional Generative Adversarial Nets</strong></a>, where the author described CGAN as <i>"... conditional version of generative adversarial nets, which can be constructed by simply feeding the data, y, we wish to condition on to both the generator and discriminator."</i>
 
 So how do we control the output in CGAN?
-<img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/CGAN_idea.png?raw=true" height="550">
+<img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/Fashion_MNIST/CGAN_idea.png?raw=true" height="550">
 
 The above diagram outlines the structure of the network in CGAN. We can see that CGAN is similar to InfoGAN in that it is an extention of DCGAN with new components such as the control vector y which is fed into both the generator and the discriminator.
 
