@@ -39,7 +39,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About the Project
-Generative Adversarial Networks, or GAN, is a class of machine learning systems where two neural networks contest with each other. Generally, a model called the Generator is trained on real images which then generate new images that look at least superficially authentic to human observers while another model called the Discriminator distinguishes images produced by the Generator from real images. In this project, I aim to build a various types of GAN models using the 100k Celebrity dataset from kaggle to generate fake human faces and the MNIST dataset to generate some numbers. For more on GAN, please visit: <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf"><strong>Ian Goodfellow's GAN paper</strong></a>.
+Generative Adversarial Networks, or GAN, is a class of machine learning systems where two neural networks contest with each other. Generally, a model called the Generator is trained on real images which then generate new images that look at least superficially authentic to human observers while another model called the Discriminator distinguishes images produced by the Generator from real images. In this project, I aim to build various types of GAN models with publicly available datasets for image generation, conditional image generation and unpaired image translation problems. For more on GAN, please visit: <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf"><strong>Ian Goodfellow's GAN paper</strong></a>.
 
 All GAN implementations will be done using Keras with Tensorflow backend. This project aims to help beginners to get started with hands-on GAN implementation with hints and tips on how to improve performance with various GAN architectures.
 
