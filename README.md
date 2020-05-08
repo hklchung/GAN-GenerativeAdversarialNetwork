@@ -32,6 +32,7 @@
   * [LSGAN](#lsgan)
   * [InfoGAN](#infogan)
   * [CGAN](#cgan)
+  * [CycleGAN](#cyclegan)
 * [Contributing](#contributing)
 * [Contact](#contact)
 * [Known Issues](#known-issues)
@@ -57,7 +58,7 @@ Hope you are now excited to start building GAN on your machine. To get started, 
 
 <!-- USAGE -->
 ## Usage
-This projects is divided into 2 parts. With the foundational level GANs, namely DCGAN and LSGAN codes, I will be running through the below listed steps.
+This projects is divided into 3 parts. With the foundational level GANs, namely DCGAN and LSGAN codes, I will be running through the below listed steps.
 1. Download the <a href="https://www.kaggle.com/greg115/celebrities-100k"><strong>100k Celebrities Images Dataset</strong></a>
 2. Run resize images to scale down image size to [32 x 32] (default) or [64 x 64]
 3. Load images into session
@@ -65,7 +66,7 @@ This projects is divided into 2 parts. With the foundational level GANs, namely 
 5. Train the GAN
 6. Export a result .gif file
 
-I will also explore extensions of the foundational GANs with variants such as CGAN, InfoGAN and CycleGAN where due to resource limitations, I will run with the MNIST dataset to produce results that are less demanding on the hardware.
+Next, I will explore extensions of the foundational GANs with variants such as CGAN, InfoGAN and CycleGAN. CGAN and InfoGAN will be used to tackle problems such as conditional image generation using publicly available datasets such as <a href="https://www.kaggle.com/jessicali9530/celeba-dataset"><strong>CelebFaces Attributes (CelebA) Dataset</strong></a>, MNIST and Fashion MNIST. With CycleGAN, I will explore unpaired image translation with the <a href="https://www.kaggle.com/andrewparr/monet2photo"><strong>Monet2Photo Dataset</strong></a>.
 
 <!-- DCGAN -->
 ### DCGAN
@@ -390,6 +391,36 @@ An interesting note here is that during development, the original code for train
   <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/Celebs/Controlled_generation_explained.png?raw=true" height="700">
 </p>
 
+
+</p>
+</details>
+
+<!-- CycleGAN -->
+### CycleGAN
+<details><summary>Click to expand</summary>
+<p>
+CycleGAN is a GAN implementation that enables unpaired image translation. Traditionally, image translation requires large volume of paired examples. The CycleGAN architecture was developed and described by Zhu et al, 2017 in the paper <a href="https://arxiv.org/abs/1703.10593"><strong>Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks</strong></a>, in which the author described CycleGAN as a process of <i>"... learning to translate an image from a source domain X to a target domain Y in the absence of paired examples."</i>
+
+Aim: Our goal here is to demonstrate ability to perform image translation with the CycleGAN architecture. 
+
+Results from CycleGAN training with below listed configurations.
+<table>
+  <tbody>
+    <tr>
+      <th>Results</th>
+      <th>Configuration</th>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CycleGAN/Result/GANmodel_100.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>batch_size = 128</li>
+          <li>epoch = 100</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 </p>
 </details>
