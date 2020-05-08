@@ -177,7 +177,7 @@ def plot_output(step):
           image = cv2.resize(image, (256, 256))
           image = np.expand_dims(image, axis = 0)
           image_translated = gen_a2b.predict(image)
-          plt.imshow(image.reshape(256,256,3))
+          plt.imshow((image_translated/255).reshape(256,256,3))
           plt.axis('off')
         elif i % 4 == 2:
           image = cv2.imread('monet2photo/testB/' + random.choice(os.listdir('monet2photo/testB')))
@@ -187,7 +187,7 @@ def plot_output(step):
           image = cv2.resize(image, (256, 256))
           image = np.expand_dims(image, axis = 0)
           image_translated = gen_b2a.predict(image)
-          plt.imshow(image.reshape(256,256,3))
+          plt.imshow((image_translated/255).reshape(256,256,3))
           plt.axis('off')
           plt.tight_layout()
     plt.savefig(filename)
