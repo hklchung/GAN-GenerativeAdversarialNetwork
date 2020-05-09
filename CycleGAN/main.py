@@ -192,8 +192,19 @@ def plot_output(step):
           plt.tight_layout()
     plt.savefig(filename)
     plt.close('all')
+    
+#==========================Plot loss function==================================
+def plot_loss(gan1_performance, gan2_performance, jump=100):
+    plt.figure(figsize=(10, 10))
+    plt.plot(gan1_performance[0::jump], label='GAN_A2B')
+    plt.plot(gan2_performance[0::jump], label='GAN_B2A')
+    plt.xlabel('epoch ({})'.format(jump))
+    plt.ylabel('loss')
+    plt.legend()
+    plt.savefig('loss_over_epoch.png')
+    plt.close('all')
 
-#=============================Train CycleGAN===================================
+#===========================Train CycleGAN func================================
 def train_gan(batch_size=128, epoch=100, save_interval=1):
     
     # simple data augmentation implicitly including resizing to 256,256
@@ -205,42 +216,60 @@ def train_gan(batch_size=128, epoch=100, save_interval=1):
     feature_image_generator_b = feature_datagen_b.flow_from_directory('images_b', seed=1, class_mode=None, batch_size = batch_size)
     
     # core training loop, loads batch of images, generators and discriminators on batch
-    for i in tqdm(range(0, epoch)):    
-      # load a batch of images of each class into memory
-      images_a_batch = next(feature_image_generator_a)
-      images_b_batch = next(feature_image_generator_b)
-      target_a_batch = np.ones([len(images_a_batch),1])
-      target_b_batch = np.ones([len(images_b_batch),1])
+    gan_a2b_losses = []
+    gan_b2a_losses = []
+
+    batch_num_per_epoch = len(os.listdir('images_a/trainA'))//batch_size
     
-      # fit each generator
-      GAN_a2b.train_on_batch(images_a_batch, [target_a_batch, images_a_batch, images_a_batch])
-      GAN_b2a.train_on_batch(images_b_batch, [target_b_batch, images_b_batch, images_b_batch])
-    
-      # create a new set of false images to train discriminator
-      images_b_batch_fake = gen_a2b.predict(images_a_batch, batch_size=1)
-      images_a_batch_fake = gen_b2a.predict(images_b_batch, batch_size=1)
-      target_a_batch_fake = np.zeros([len(images_a_batch_fake),1])
-      target_b_batch_fake = np.zeros([len(images_b_batch_fake),1])
-    
-      # combine fake and real images by class
-      images_a_batch_discriminator = np.concatenate((images_a_batch, images_a_batch_fake), axis=0)
-      images_b_batch_discriminator = np.concatenate((images_b_batch, images_b_batch_fake), axis=0)
-      target_a_batch_discriminator = np.concatenate((target_a_batch, target_a_batch_fake), axis=0)
-      target_b_batch_discriminator = np.concatenate((target_b_batch, target_b_batch_fake), axis=0)
-    
-      # fit discriminator to determine real vs fake images in a class
-      disc_a.train_on_batch(images_a_batch_discriminator, target_a_batch_discriminator)
-      disc_b.train_on_batch(images_b_batch_discriminator, target_b_batch_discriminator)
-    
-      # create a second training set for the discriminators of all real images mixing the classes
-      images_a_batch_discriminator = np.concatenate((images_a_batch, images_b_batch), axis=0)
-      images_b_batch_discriminator = np.concatenate((images_b_batch, images_a_batch), axis=0)
-      target_a_batch_discriminator = np.concatenate((target_a_batch, target_a_batch_fake), axis=0)
-      target_b_batch_discriminator = np.concatenate((target_b_batch, target_b_batch_fake), axis=0)
-    
-      # train discriminators to determine real images of class a from real images of class b
-      disc_a.train_on_batch(images_a_batch_discriminator, target_a_batch_discriminator)
-      disc_b.train_on_batch(images_b_batch_discriminator, target_b_batch_discriminator)
-      
-      if save_interval>0 and (i+1)%save_interval==0:
-          plot_output(i)
+    for i in tqdm(range(0, epoch)):
+        for j in tqdm(range(0, batch_num_per_epoch)):
+            # load a batch of images of each class into memory
+            images_a_batch = next(feature_image_generator_a)
+            images_b_batch = next(feature_image_generator_b)
+            target_a_batch = np.ones([len(images_a_batch),1])
+            target_b_batch = np.ones([len(images_b_batch),1])
+          
+            # fit each generator
+            gan_a2b_loss = GAN_a2b.train_on_batch(images_a_batch, [target_a_batch, images_a_batch, images_a_batch])
+            gan_b2a_loss = GAN_b2a.train_on_batch(images_b_batch, [target_b_batch, images_b_batch, images_b_batch])
+            
+            gan_a2b_losses.append(gan_a2b_loss[0])
+            gan_b2a_losses.append(gan_b2a_loss[0])
+          
+            # create a new set of false images to train discriminator
+            images_b_batch_fake = gen_a2b.predict(images_a_batch, batch_size=1)
+            images_a_batch_fake = gen_b2a.predict(images_b_batch, batch_size=1)
+            target_a_batch_fake = np.zeros([len(images_a_batch_fake),1])
+            target_b_batch_fake = np.zeros([len(images_b_batch_fake),1])
+          
+            # combine fake and real images by class
+            images_a_batch_discriminator = np.concatenate((images_a_batch, images_a_batch_fake), axis=0)
+            images_b_batch_discriminator = np.concatenate((images_b_batch, images_b_batch_fake), axis=0)
+            target_a_batch_discriminator = np.concatenate((target_a_batch, target_a_batch_fake), axis=0)
+            target_b_batch_discriminator = np.concatenate((target_b_batch, target_b_batch_fake), axis=0)
+          
+            # fit discriminator to determine real vs fake images in a class
+            disc_a.train_on_batch(images_a_batch_discriminator, target_a_batch_discriminator)
+            disc_b.train_on_batch(images_b_batch_discriminator, target_b_batch_discriminator)
+          
+            # create a second training set for the discriminators of all real images mixing the classes
+            images_a_batch_discriminator = np.concatenate((images_a_batch, images_b_batch), axis=0)
+            images_b_batch_discriminator = np.concatenate((images_b_batch, images_a_batch), axis=0)
+            target_a_batch_discriminator = np.concatenate((target_a_batch, target_a_batch_fake), axis=0)
+            target_b_batch_discriminator = np.concatenate((target_b_batch, target_b_batch_fake), axis=0)
+          
+            # train discriminators to determine real images of class a from real images of class b
+            disc_a.train_on_batch(images_a_batch_discriminator, target_a_batch_discriminator)
+            disc_b.train_on_batch(images_b_batch_discriminator, target_b_batch_discriminator)
+            
+        log_msg = "epoch %d: [GAN A2B loss: %f]" % (i, gan_a2b_loss[0])
+        log_msg = "%s  [GAN B2A loss: %f]" % (log_msg, gan_b2a_loss[0])
+        print(log_msg)
+            
+        if save_interval>0 and (i+1)%save_interval==0:
+            plot_output(i+1)
+            
+    return(gan_a2b_losses, gan_b2a_losses)
+
+#==============================Train CycleGAN===================================
+gan_a2b_ls, gan_b2a_ls = train_gan(batch_size=32, epoch=200, save_interval=10)
