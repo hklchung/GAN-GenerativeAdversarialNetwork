@@ -411,7 +411,7 @@ Results from CycleGAN training with below listed configurations.
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CycleGAN/Result/GANmodel_200.png?raw=true" height="250"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CycleGAN/Result/Monet2Photo/CycleGAN_final.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>batch_size = 128</li>
