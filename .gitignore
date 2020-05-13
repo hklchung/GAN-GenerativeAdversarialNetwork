@@ -2,6 +2,7 @@ wip*
 Model*/
 **/Assets/**
 main_old*
+**GANmodel_**
 DCGAN/Image/Train/Resized
 DCGAN/Image/Train/Resized2
 DCGAN/Image/Train/seven50_faces
