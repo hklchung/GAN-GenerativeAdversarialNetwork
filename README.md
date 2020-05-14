@@ -31,6 +31,7 @@
   * [DCGAN](#dcgan)
   * [LSGAN](#lsgan)
   * [InfoGAN](#infogan)
+  * [ACGAN](#acgan)
   * [CGAN](#cgan)
   * [CycleGAN](#cyclegan)
 * [Contributing](#contributing)
@@ -229,7 +230,7 @@ InfoGAN is an information-theoretic extention to the Generative Adversarial Netw
 In a well-trained vanilla GAN, the generator model randomly generate images that cannot be distinguished by the discriminator from the rest of the learning set. There is no control over what type of images would be generated. With InfoGAN, this becomes possible through manipulation of the input vector for the generator.
 
 So how do we control the output in InfoGAN?
-<img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/InfoGAN_idea.png?raw=true" height="550">
+<img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/Result/MNIST/InfoGAN_idea.png?raw=true" height="550">
 
 The above diagram outlines the structure of the network in InfoGAN. We can see that InfoGAN is an extention of DCGAN with new components such as the latent codes c (also known as control vector/variables) and the auxiliary distribution Q(c|X) output which comes from a modified discriminator model. Here the discriminator box denotes a single network of shared weights for 
 * A discriminator model that validates the input images
@@ -292,12 +293,56 @@ Below is a summary of what I have done in our InfoGAN code file <a href="https:/
 </p>
 </details>
 
+<!-- ACGAN -->
+### ACGAN
+<details><summary>Click to expand</summary>
+<p>
+
+Results from ACGAN training with below listed configurations. Please note that each row of images denotes one configuration of the control vector.
+<table>
+  <tbody>
+    <tr>
+      <th>Results</th>
+      <th>Configuration</th>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/Result/MNIST/GANmodel_10.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 32</li>
+          <li>epoch = 10</li>
+          <li>noise_len = 256 + 10</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>Results</th>
+      <th>Configuration</th>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/Result/Fashion_MNIST/GANmodel_10.png?raw=true" height="250"></td>
+      <td width="50%">
+        <ul>
+          <li>no pre-training</li>
+          <li>batch_size = 32</li>
+          <li>epoch = 10</li>
+          <li>noise_len = 256 + 10</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</p>
+</details>
+
 <!-- CGAN -->
 ### CGAN
 <details><summary>Click to expand</summary>
 <p>
 
-CGAN or Conditional GAN is just like the InfoGAN where the generator is above to take upon a control vector to produce image of a particular desired type. This architecture was developed and described by Mirza and Osindero, 2014 in the paper <a href="https://arxiv.org/abs/1411.1784"><strong>Conditional Generative Adversarial Nets</strong></a>, where the author described CGAN as <i>"... conditional version of generative adversarial nets, which can be constructed by simply feeding the data, y, we wish to condition on to both the generator and discriminator."</i>
+CGAN or Conditional GAN is just like the InfoGAN or ACGAN where the generator is above to take upon a control vector to produce image of a particular desired type. This architecture was developed and described by Mirza and Osindero, 2014 in the paper <a href="https://arxiv.org/abs/1411.1784"><strong>Conditional Generative Adversarial Nets</strong></a>, where the author described CGAN as <i>"... conditional version of generative adversarial nets, which can be constructed by simply feeding the data, y, we wish to condition on to both the generator and discriminator."</i>
 
 So how do we control the output in CGAN?
 <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/Fashion_MNIST/CGAN_idea.png?raw=true" height="550">
