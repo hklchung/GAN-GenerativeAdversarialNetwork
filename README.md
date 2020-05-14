@@ -297,7 +297,7 @@ Below is a summary of what I have done in our InfoGAN code file <a href="https:/
 ### ACGAN
 <details><summary>Click to expand</summary>
 <p>
-ACGAN or Auxiliary Classifier GAN is similar to the InfoGAN where the generator takes a control vector to produce image of a particular desired type. This architecture was developed and described by Odena et al., 2016 in the paper <a href="https://arxiv.org/abs/1610.09585"><strong>Conditional Image Synthesis With Auxiliary Classifier GANs</strong></a>, where the author described ACGAN as <i>"... a variant of GANs employing label conditioning..."</i> for <i>"...synthesizing high resolution photorealistic images..."
+ACGAN or Auxiliary Classifier GAN is similar to the InfoGAN where the generator takes a control vector to produce image of a particular desired type. This architecture was developed and described by Odena et al., 2016 in the paper <a href="https://arxiv.org/abs/1610.09585"><strong>Conditional Image Synthesis With Auxiliary Classifier GANs</strong></a>, where the author described ACGAN as <i>"... a variant of GANs employing label conditioning..."</i> for <i>"...synthesizing high resolution photorealistic images..."</i>
   
 Aim: Our goal here is to demonstrate ability to control generated outputs through the ACGAN architecture. 
 
