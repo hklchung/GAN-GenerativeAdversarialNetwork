@@ -297,6 +297,9 @@ Below is a summary of what I have done in our InfoGAN code file <a href="https:/
 ### ACGAN
 <details><summary>Click to expand</summary>
 <p>
+ACGAN or Auxiliary Classifier GAN is similar to the InfoGAN where the generator takes a control vector to produce image of a particular desired type. This architecture was developed and described by Odena et al., 2016 in the paper <a href="https://arxiv.org/abs/1610.09585"><strong>Conditional Image Synthesis With Auxiliary Classifier GANs</strong></a>, where the author described ACGAN as <i>"... a variant of GANs employing label conditioning..."</i> for <i>"...synthesizing high resolution photorealistic images..."
+  
+Aim: Our goal here is to demonstrate ability to control generated outputs through the ACGAN architecture. 
 
 Results from ACGAN training with below listed configurations. Please note that each row of images denotes one configuration of the control vector.
 <table>
@@ -306,13 +309,13 @@ Results from ACGAN training with below listed configurations. Please note that e
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/Result/MNIST/GANmodel_10.png?raw=true" height="250"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/ACGAN/Result/MNIST/Final.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>no pre-training</li>
-          <li>batch_size = 32</li>
+          <li>batch_size = 16</li>
           <li>epoch = 10</li>
-          <li>noise_len = 256 + 10</li>
+          <li>noise_len = 32 + 10</li>
         </ul>
       </td>
     </tr>
@@ -321,13 +324,13 @@ Results from ACGAN training with below listed configurations. Please note that e
       <th>Configuration</th>
     </tr>
     <tr>
-      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/InfoGAN/Result/Fashion_MNIST/GANmodel_10.png?raw=true" height="250"></td>
+      <td><img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/ACGAN/Result/Fashion_MNIST/Final.png?raw=true" height="250"></td>
       <td width="50%">
         <ul>
           <li>no pre-training</li>
-          <li>batch_size = 32</li>
+          <li>batch_size = 16</li>
           <li>epoch = 10</li>
-          <li>noise_len = 256 + 10</li>
+          <li>noise_len = 32 + 10</li>
         </ul>
       </td>
     </tr>
@@ -342,7 +345,7 @@ Results from ACGAN training with below listed configurations. Please note that e
 <details><summary>Click to expand</summary>
 <p>
 
-CGAN or Conditional GAN is just like the InfoGAN or ACGAN where the generator is above to take upon a control vector to produce image of a particular desired type. This architecture was developed and described by Mirza and Osindero, 2014 in the paper <a href="https://arxiv.org/abs/1411.1784"><strong>Conditional Generative Adversarial Nets</strong></a>, where the author described CGAN as <i>"... conditional version of generative adversarial nets, which can be constructed by simply feeding the data, y, we wish to condition on to both the generator and discriminator."</i>
+CGAN or Conditional GAN is just like the InfoGAN or ACGAN where the generator takes upon a control vector to produce image of a particular desired type. This architecture was developed and described by Mirza and Osindero, 2014 in the paper <a href="https://arxiv.org/abs/1411.1784"><strong>Conditional Generative Adversarial Nets</strong></a>, where the author described CGAN as <i>"... conditional version of generative adversarial nets, which can be constructed by simply feeding the data, y, we wish to condition on to both the generator and discriminator."</i>
 
 So how do we control the output in CGAN?
 <img src="https://github.com/hklchung/GAN-GenerativeAdversarialNetwork/blob/master/CGAN/Result/Fashion_MNIST/CGAN_idea.png?raw=true" height="550">
