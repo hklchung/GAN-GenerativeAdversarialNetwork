@@ -67,7 +67,7 @@ This projects is divided into 3 parts. With the foundational level GANs, namely 
 5. Train the GAN
 6. Export a result .gif file
 
-Next, I will explore extensions of the foundational GANs with variants such as CGAN, InfoGAN and CycleGAN. CGAN and InfoGAN will be used to tackle problems such as conditional image generation using publicly available datasets such as <a href="https://www.kaggle.com/jessicali9530/celeba-dataset"><strong>CelebFaces Attributes (CelebA) Dataset</strong></a>, MNIST and Fashion MNIST. With CycleGAN, I will explore unpaired image translation with the <a href="https://www.kaggle.com/andrewparr/monet2photo"><strong>Monet2Photo Dataset</strong></a>.
+Next, I will explore extensions of the foundational GANs with variants such as CGAN, InfoGAN and CycleGAN. CGAN, ACGAN and InfoGAN will be used to tackle problems such as conditional image generation using publicly available datasets such as <a href="https://www.kaggle.com/jessicali9530/celeba-dataset"><strong>CelebFaces Attributes (CelebA) Dataset</strong></a>, MNIST and Fashion MNIST. With CycleGAN, I will explore unpaired image translation with the <a href="https://www.kaggle.com/andrewparr/monet2photo"><strong>Monet2Photo Dataset</strong></a>.
 
 <!-- DCGAN -->
 ### DCGAN
