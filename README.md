@@ -40,9 +40,11 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About the Project
+This project started with myself learning and investigating the applications of Generative Adversarial Networks. Having gone through countless Medium or other various blog posts, and GitHub repos that either <b>1) just don't bloody work</b> or <b>2) show results are not reproducible</b> to the effect described by the authors, I have decided to create a one stop shop for <b>YOU</b>, my fellow GAN-enthusiast to quickly get started with code that not only works but is succinct and have clear logical flow. So I hope you use this repo well and accelerate your learning in this space.
+
 Generative Adversarial Networks, or GAN, is a class of machine learning systems where two neural networks contest with each other. Generally, a model called the Generator is trained on real images which then generate new images that look at least superficially authentic to human observers while another model called the Discriminator distinguishes images produced by the Generator from real images. In this project, I aim to build various types of GAN models with publicly available datasets for image generation, conditional image generation and unpaired image translation problems. For more on GAN, please visit: <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf"><strong>Ian Goodfellow's GAN paper</strong></a>.
 
-All GAN implementations will be done using Keras with Tensorflow backend. This project aims to help beginners to get started with hands-on GAN implementation with hints and tips on how to improve performance with various GAN architectures.
+All GAN implementations will be done using Keras with Tensorflow backend. This documentation aims to help beginners to get started with hands-on GAN implementation with hints and tips on how to improve performance with various GAN architectures.
 
 <!-- GETTING STARTED -->
 ## Getting Started
